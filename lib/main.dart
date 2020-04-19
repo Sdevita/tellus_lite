@@ -3,19 +3,28 @@ import 'package:provider/provider.dart';
 import 'package:telluslite/feature/home/home_page.dart';
 import 'package:telluslite/feature/home/home_viewmodel.dart';
 
-void main() => runApp(MyApp());
+import 'navigation/Routes.dart';
+
+void main() async {
+  Routes.createRoutes();
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: ChangeNotifierProvider(create: (_) =>  HomeViewModel(), child: HomePage(),),
-    );
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: ChangeNotifierProvider(
+          create: (_) => HomeViewModel(),
+          child: HomePage(),
+        ),
+        navigatorKey: Routes.sailor.navigatorKey,
+        // important
+        onGenerateRoute: Routes.sailor.generator());
   }
 }
-

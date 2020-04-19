@@ -16,11 +16,29 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     viewModel = Provider.of<HomeViewModel>(context);
     return BaseWidget(
-      loader: viewModel.loader,
-      body: GestureDetector(
-        child: Text("YEAH"),
-        onTap: () { viewModel.getEarthquakes();},
-      ),
-    );
+        loader: viewModel.loader,
+        body: viewModel.earthquakeList.isEmpty
+            ? Center(
+                child: RaisedButton(
+                  elevation: 5,
+                  color: Colors.red,
+                  child: Text("Get earthquakes"),
+                  onPressed: () {
+                    viewModel.getEarthquakes(context);
+                  },
+                ),
+              )
+            : _buildList(context));
+  }
+
+  _buildList(BuildContext context) {
+    return ListView.separated(
+        itemBuilder: (BuildContext context, int index) {
+          return ListTile(
+            title: Text('${viewModel.earthquakeList[index].properties.place}'),
+          );
+        },
+        separatorBuilder: (BuildContext context, int index) => Divider(),
+        itemCount: viewModel.earthquakeList.length);
   }
 }
