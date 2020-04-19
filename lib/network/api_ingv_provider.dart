@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:telluslite/network/model/response/ingv_response.dart';
 
 
@@ -8,6 +9,7 @@ class IngvApiProvider{
 
   Future<IngvResponse> getEarthquakes() async {
     try {
+      _addInterceptors();
       Response response = await _dio.get(_endpoint);
       return IngvResponse.fromJson(response.data);
     } catch (error, stacktrace) {
@@ -15,4 +17,16 @@ class IngvApiProvider{
       return IngvResponse.withError("$error");
     }
   }
+
+  _addInterceptors (){
+    _dio.interceptors..add(PrettyDioLogger(
+        requestHeader: true,
+        requestBody: true,
+        responseBody: false,
+        responseHeader: false,
+        error: true,
+        compact: true,
+        maxWidth: 90));
+  }
+
 }
