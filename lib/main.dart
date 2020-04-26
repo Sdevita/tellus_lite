@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sailor/sailor.dart';
+import 'package:telluslite/common/theme/theme_changer.dart';
 import 'package:telluslite/feature/home/home_page.dart';
 import 'package:telluslite/feature/home/home_viewmodel.dart';
 
+import 'common/theme/Themes.dart';
 import 'navigation/Routes.dart';
 
 void main() async {
@@ -15,11 +17,25 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    return ChangeNotifierProvider<ThemeChanger>(
+      create: (_) {
+        ThemeChanger themeChanger = ThemeChanger();
+        themeChanger.setLightMode(context);
+        return themeChanger;
+      },
+      child: MaterialAppWithTheme()
+    );
+  }
+}
+
+class MaterialAppWithTheme extends StatelessWidget{
+  @override
+  Widget build(BuildContext context) {
+    final theme = Provider.of<ThemeChanger>(context);
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      debugShowCheckedModeBanner: false,
+      theme: theme.themeData,
       home: ChangeNotifierProvider(
         create: (_) => HomeViewModel(),
         child: HomePage(),
@@ -31,4 +47,5 @@ class MyApp extends StatelessWidget {
       ],
     );
   }
+
 }

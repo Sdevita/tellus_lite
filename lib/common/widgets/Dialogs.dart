@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class Dialog {
+class Dialogs {
   static showDCustomDialog(BuildContext context, String title,
       String description, List<Widget> actions) {
     showDialog(
