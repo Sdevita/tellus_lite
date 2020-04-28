@@ -7,6 +7,7 @@ import 'package:telluslite/common/widgets/Dialogs.dart';
 import 'package:telluslite/network/model/response/feature.dart';
 import 'package:telluslite/network/model/response/ingv_response.dart';
 import 'package:telluslite/network/repositories/earthquake_repository.dart';
+import 'package:telluslite/push_notification/push_notification_manager.dart';
 
 class HomeViewModel extends BaseViewModel {
   List<Feature> _earthquakeList;

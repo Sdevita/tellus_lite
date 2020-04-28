@@ -4,6 +4,7 @@ import 'package:sailor/sailor.dart';
 import 'package:telluslite/common/theme/theme_changer.dart';
 import 'package:telluslite/feature/home/home_page.dart';
 import 'package:telluslite/feature/home/home_viewmodel.dart';
+import 'package:telluslite/push_notification/push_notification_manager.dart';
 
 import 'common/theme/Themes.dart';
 import 'navigation/Routes.dart';
@@ -17,6 +18,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    PushNotificationsManager().init();
     return ChangeNotifierProvider<ThemeChanger>(
       create: (_) {
         ThemeChanger themeChanger = ThemeChanger();
