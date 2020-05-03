@@ -5,10 +5,11 @@ class Themes {
   static ThemeData basicTheme(BuildContext context) {
     return ThemeData(
       brightness: Brightness.light,
-      accentColor: Colors.red,
+      accentColor: Colors.white,
+      primaryColor: Colors.green,
       backgroundColor: Colors.white,
       appBarTheme: AppBarTheme(brightness: Brightness.light),
-      buttonColor: Colors.red,
+      buttonColor: Colors.green[700],
       canvasColor: Colors.white,
       textTheme: GoogleFonts.latoTextTheme(
         Theme.of(context).textTheme,
@@ -20,9 +21,10 @@ class Themes {
     return ThemeData(
       brightness: Brightness.dark,
       accentColor: Colors.white,
-      backgroundColor: Colors.black26,
-      buttonColor: Colors.black,
-      canvasColor: Colors.black,
+      backgroundColor: Colors.blueGrey[700],
+      buttonColor: Colors.blueGrey,
+      primaryColor: Colors.white,
+      canvasColor: Colors.black26,
       appBarTheme: AppBarTheme(brightness: Brightness.dark),
       textTheme: GoogleFonts.ubuntuTextTheme(
         Theme.of(context).textTheme,

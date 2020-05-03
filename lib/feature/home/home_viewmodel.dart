@@ -4,6 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:telluslite/common/base_viewmodel.dart';
 import 'package:telluslite/common/widgets/Dialogs.dart';
+import 'package:telluslite/navigation/Routes.dart';
 import 'package:telluslite/network/model/response/feature.dart';
 import 'package:telluslite/network/model/response/ingv_response.dart';
 import 'package:telluslite/network/repositories/earthquake_repository.dart';
@@ -14,11 +15,15 @@ class HomeViewModel extends BaseViewModel {
   GoogleMapController _mapController;
   Geolocator _geolocator;
   Position _currentPosition;
+  bool _isDarkMode = false;
   Set<Marker> _markers;
   bool showMapLoader = true;
 
-  init(BuildContext context) async {
+  init(BuildContext context, bool isDarkMode) async {
+    _showMapLoader(loader);
+    await PushNotificationsManager().init();
     _geolocator = Geolocator();
+    _isDarkMode = isDarkMode;
     onGetMyLocation();
     _getEarthquakes(context);
   }
@@ -26,11 +31,11 @@ class HomeViewModel extends BaseViewModel {
   onGetMyLocation() async {
     _currentPosition = await _geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.medium);
-    if (_currentPosition != null) {
+    if (_currentPosition != null && _mapController != null) {
       var camera = CameraPosition(
           target: LatLng(_currentPosition.latitude, _currentPosition.longitude),
           zoom: 7);
-      _mapController.moveCamera(CameraUpdate.newCameraPosition(camera));
+      _mapController?.moveCamera(CameraUpdate.newCameraPosition(camera));
     }
   }
 
@@ -64,7 +69,9 @@ class HomeViewModel extends BaseViewModel {
   }
 
   _setMapStyle() async {
-    String mapPath = 'assets/map_style/grey_map.json';
+    String mapPath = _isDarkMode
+        ? 'assets/map_style/blue_dark_map.json'
+        : 'assets/map_style/x_spot_style.json';
     String style = await rootBundle.loadString(mapPath);
     _mapController.setMapStyle(style);
   }
@@ -110,6 +117,10 @@ class HomeViewModel extends BaseViewModel {
     }
 
     return LatLng(_currentPosition.latitude, _currentPosition.longitude);
+  }
+
+  goToSettings(BuildContext context) {
+    Navigator.of(context).pushNamed(Routes.settingsRoute);
   }
 
   Set<Marker> get markers => _markers;

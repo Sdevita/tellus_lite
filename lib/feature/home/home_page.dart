@@ -14,13 +14,15 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   HomeViewModel viewModel;
   ThemeChanger themeChanger;
+  double bottomPadding;
+  Alignment bottomAlignment;
+  Alignment topAlignment;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      viewModel.init(context);
-      print(themeChanger.isDarkModeTheme);
+      viewModel.init(context, themeChanger.isDarkModeTheme);
     });
   }
 
@@ -28,6 +30,12 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     viewModel = Provider.of<HomeViewModel>(context);
     themeChanger = Provider.of(context);
+
+    double mqPTop = MediaQuery.of(context).padding.top;
+    bottomPadding = MediaQuery.of(context).padding.bottom;
+    bottomAlignment = Alignment(0.0, 1 - (bottomPadding + 40) / 1000);
+    topAlignment = Alignment(0.0, -(1 - ((mqPTop + 60) / 1000)));
+
     return Scaffold(
       body: Stack(
         children: <Widget>[
@@ -42,8 +50,7 @@ class _HomePageState extends State<HomePage> {
 
   _buildHeader(BuildContext context) {
     return Align(
-      alignment:
-          Alignment(0.0, -((MediaQuery.of(context).padding.top / 100) + 0.45)),
+      alignment: topAlignment,
       child: Container(
         width: MediaQuery.of(context).size.width / 2,
         decoration: BoxDecoration(
@@ -56,17 +63,22 @@ class _HomePageState extends State<HomePage> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  viewModel.goToSettings(context);
+                },
                 splashColor: Colors.transparent,
-                icon: Icon(Icons.menu, color: Theme.of(context).accentColor,),
+                icon: Icon(
+                  Icons.menu,
+                  color: Theme.of(context).primaryColor,
+                ),
               ),
-             Visibility(
-                    visible: viewModel.showMapLoader,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: CircularProgressIndicator(),
-                      ),
-                    ),
+              Visibility(
+                visible: viewModel.showMapLoader,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: CircularProgressIndicator(),
+                ),
+              ),
             ],
           ),
         ),
@@ -77,7 +89,7 @@ class _HomePageState extends State<HomePage> {
   _buildMap(BuildContext context) {
     return GoogleMap(
       padding: EdgeInsets.only(
-          bottom: (MediaQuery.of(context).size.height * 0.17) -
+          bottom: (MediaQuery.of(context).size.height * 0.11) -
               MediaQuery.of(context).padding.bottom),
       initialCameraPosition:
           CameraPosition(target: viewModel.initialPosition, zoom: 7),
@@ -92,15 +104,14 @@ class _HomePageState extends State<HomePage> {
 
   _buildContainer(BuildContext context) {
     return Align(
-      alignment: Alignment(0.0, 1.0),
+      alignment: bottomAlignment,
       child: Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height * 0.17,
+        width: MediaQuery.of(context).size.width - 20,
+        height: MediaQuery.of(context).size.height * 0.08,
         padding: const EdgeInsets.all(20.0),
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(
-                topRight: Radius.circular(40.0),
-                topLeft: Radius.circular(40.0)),
+            borderRadius:
+                BorderRadius.circular(MediaQuery.of(context).size.width * 0.3),
             color: Theme.of(context).backgroundColor),
       ),
     );
@@ -108,7 +119,7 @@ class _HomePageState extends State<HomePage> {
 
   _buildBottomMenu() {
     return Align(
-      alignment: Alignment(0.0, 0.84),
+      alignment: bottomAlignment,
       child: Container(
         padding: EdgeInsets.all(10),
         child: Row(
@@ -118,7 +129,7 @@ class _HomePageState extends State<HomePage> {
               MaterialButton(
                 child: Icon(
                   Icons.map,
-                  color: Theme.of(context).accentColor,
+                  color: Theme.of(context).primaryColor,
                   size: 35,
                 ),
                 onPressed: () {
@@ -129,10 +140,10 @@ class _HomePageState extends State<HomePage> {
               MaterialButton(
                 child: Icon(
                   Icons.multiline_chart,
-                  color: Theme.of(context).accentColor,
+                  color: Theme.of(context).primaryColor,
                   size: 35,
                 ),
-                onPressed: (){
+                onPressed: () {
                   themeChanger.setDarkMode(context);
                   viewModel.setMapStyle("assets/map_style/blue_dark_map.json");
                 },
@@ -141,12 +152,12 @@ class _HomePageState extends State<HomePage> {
               MaterialButton(
                 child: Icon(
                   Icons.message,
-                  color: Theme.of(context).accentColor,
+                  color: Theme.of(context).primaryColor,
                   size: 35,
                 ),
                 onPressed: () {
                   themeChanger.setLightMode(context);
-                  viewModel.setMapStyle("assets/map_style/grey_map.json");
+                  viewModel.setMapStyle("assets/map_style/x_spot_style.json");
                 },
                 shape: CircleBorder(),
               ),

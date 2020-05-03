@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "386261407800",
+    "firebase_url": "https://telluspro-3be9c.firebaseio.com",
+    "project_id": "telluspro-3be9c",
+    "storage_bucket": "telluspro-3be9c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:386261407800:android:f75ab01a361bc3ed1c2ecd",
+        "android_client_info": {
+          "package_name": "com.salvatoredevita.telluslite"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "386261407800-b8obm5etm90sjkknejbk6h8d09iohd5o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyALpzEakMsvVzJc48o84HMpFANfoXuOObE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "386261407800-b8obm5etm90sjkknejbk6h8d09iohd5o.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "386261407800-p0kimc7fv8a65sbotdij8i09gp3v4f1i.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.salvatoredevita.telluslite"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

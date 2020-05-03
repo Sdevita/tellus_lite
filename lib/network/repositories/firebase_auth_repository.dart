@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
-mixin LoginMixin {
+class FireBaseAuthRepository{
   final FirebaseAuth auth = FirebaseAuth.instance;
 
   Future<FirebaseUser> handleSignInEmail(String email, String password) async {
@@ -30,5 +30,14 @@ mixin LoginMixin {
 
     return user;
 
+  }
+
+  Future<bool> isUserLogged() async{
+    FirebaseUser result = await auth.currentUser();
+    return result != null;
+  }
+
+  Future<void> logout() async{
+    await auth.signOut();
   }
 }

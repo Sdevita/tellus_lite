@@ -4,13 +4,17 @@ class BaseWidget extends StatefulWidget {
   final Widget body;
   final Widget appBar;
   final bool loader;
+  final bool safeAreaTop;
+  final bool safeAreaBottom;
   final Color backgroundColor;
 
   BaseWidget(
       {@required this.body,
       this.appBar,
+      this.safeAreaTop = true,
+      this.safeAreaBottom = true,
       this.loader = false,
-      this.backgroundColor = Colors.white});
+      this.backgroundColor});
 
   @override
   _BaseWidgetState createState() => _BaseWidgetState();
@@ -20,10 +24,12 @@ class _BaseWidgetState extends State<BaseWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: widget.backgroundColor,
+      backgroundColor: widget.backgroundColor ?? Theme.of(context).backgroundColor,
       body: Stack(
         children: <Widget>[
           SafeArea(
+            top: widget.safeAreaTop,
+            bottom: widget.safeAreaBottom,
             child: Column(
               children: <Widget>[
                 widget.appBar != null
@@ -39,7 +45,7 @@ class _BaseWidgetState extends State<BaseWidget> {
           ),
           widget.loader
               ? Center(
-                  child: CircularProgressIndicator(),
+                  child: CircularProgressIndicator(backgroundColor: Theme.of(context).primaryColor,),
                 )
               : IgnorePointer()
         ],
