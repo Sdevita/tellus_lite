@@ -8,7 +8,6 @@ import 'package:telluslite/navigation/Routes.dart';
 import 'package:telluslite/network/model/response/feature.dart';
 import 'package:telluslite/network/model/response/ingv_response.dart';
 import 'package:telluslite/network/repositories/earthquake_repository.dart';
-import 'package:telluslite/push_notification/push_notification_manager.dart';
 
 class HomeViewModel extends BaseViewModel {
   List<Feature> _earthquakeList;
@@ -21,7 +20,6 @@ class HomeViewModel extends BaseViewModel {
 
   init(BuildContext context, bool isDarkMode) async {
     _showMapLoader(loader);
-    await PushNotificationsManager().init();
     _geolocator = Geolocator();
     _isDarkMode = isDarkMode;
     onGetMyLocation();
@@ -76,7 +74,10 @@ class HomeViewModel extends BaseViewModel {
     _mapController.setMapStyle(style);
   }
 
-  setMapStyle(String stylePath) async {
+  setMapStyle(bool isDarkMode) async {
+    String stylePath = _isDarkMode
+        ? 'assets/map_style/blue_dark_map.json'
+        : 'assets/map_style/x_spot_style.json';
     _showMapLoader(true);
     String style = await rootBundle.loadString(stylePath);
     _showMapLoader(false);
@@ -119,8 +120,10 @@ class HomeViewModel extends BaseViewModel {
     return LatLng(_currentPosition.latitude, _currentPosition.longitude);
   }
 
-  goToSettings(BuildContext context) {
-    Navigator.of(context).pushNamed(Routes.settingsRoute);
+  goToSettings(BuildContext context) async {
+    var isDarkMode =
+        await Navigator.of(context).pushNamed(Routes.settingsRoute);
+    setMapStyle(isDarkMode);
   }
 
   Set<Marker> get markers => _markers;

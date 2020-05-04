@@ -24,9 +24,9 @@ class Themes {
       backgroundColor: Colors.blueGrey[700],
       buttonColor: Colors.blueGrey,
       primaryColor: Colors.white,
-      canvasColor: Colors.black26,
+      canvasColor: Colors.black12,
       appBarTheme: AppBarTheme(brightness: Brightness.dark),
-      textTheme: GoogleFonts.ubuntuTextTheme(
+      textTheme: GoogleFonts.latoTextTheme(
         Theme.of(context).textTheme,
       ),
     );

@@ -1,5 +1,4 @@
 import 'dart:developer' as developer;
-import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 
@@ -29,7 +28,7 @@ class PushNotificationsManager {
       });
       await _firebaseMessaging.subscribeToTopic("tellus");
       _firebaseMessaging.configure(
-        onBackgroundMessage: Platform.isIOS ? null : backgroundMessageHandler,
+        //onBackgroundMessage: Platform.isIOS ? null : backgroundMessageHandler,
         onMessage: (Map<String, dynamic> message) async {
           print("onMessage: $message");
         },

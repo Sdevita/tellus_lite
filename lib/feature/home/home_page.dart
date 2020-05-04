@@ -11,7 +11,7 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   HomeViewModel viewModel;
   ThemeChanger themeChanger;
   double bottomPadding;
@@ -27,10 +27,17 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print(state.toString());
+    if (state == AppLifecycleState.resumed) {
+      viewModel.setMapStyle(themeChanger.isDarkModeTheme);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     viewModel = Provider.of<HomeViewModel>(context);
     themeChanger = Provider.of(context);
-
     double mqPTop = MediaQuery.of(context).padding.top;
     bottomPadding = MediaQuery.of(context).padding.bottom;
     bottomAlignment = Alignment(0.0, 1 - (bottomPadding + 40) / 1000);
@@ -143,10 +150,7 @@ class _HomePageState extends State<HomePage> {
                   color: Theme.of(context).primaryColor,
                   size: 35,
                 ),
-                onPressed: () {
-                  themeChanger.setDarkMode(context);
-                  viewModel.setMapStyle("assets/map_style/blue_dark_map.json");
-                },
+                onPressed: () {},
                 shape: CircleBorder(),
               ),
               MaterialButton(
@@ -155,10 +159,7 @@ class _HomePageState extends State<HomePage> {
                   color: Theme.of(context).primaryColor,
                   size: 35,
                 ),
-                onPressed: () {
-                  themeChanger.setLightMode(context);
-                  viewModel.setMapStyle("assets/map_style/x_spot_style.json");
-                },
+                onPressed: () {},
                 shape: CircleBorder(),
               ),
             ]),
