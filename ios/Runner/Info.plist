@@ -3,9 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>FirebaseAppDelegateProxyEnabled</key>
-	<true/>
-	<key>FirebaseScreenReportingEnabled</key>
-	<string>1</string>
+	<false/>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
 		<string>com.salvatoredevita.telluslite</string>

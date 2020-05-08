@@ -2,10 +2,12 @@ import 'package:telluslite/network/model/response/ingv_response.dart';
 
 import '../api_ingv_provider.dart';
 
-class EarthquakeRepository{
+class EarthquakeRepository {
   IngvApiProvider _apiProvider = IngvApiProvider();
 
-  Future<IngvResponse> getEarthQuakes(){
-    return _apiProvider.getEarthquakes();
+  Future<IngvResponse> getEarthQuakes(double longitude, double latitude,
+      {double minDepth = 0, double minMag = 2, int numberOfDay = 2}) {
+    return _apiProvider.getEarthquakes(longitude, latitude,
+        minDepth: minDepth, minMag: minMag, numberOfDay: numberOfDay);
   }
 }

@@ -22,7 +22,7 @@ class HomeViewModel extends BaseViewModel {
     _showMapLoader(loader);
     _geolocator = Geolocator();
     _isDarkMode = isDarkMode;
-    onGetMyLocation();
+    await onGetMyLocation();
     _getEarthquakes(context);
   }
 
@@ -86,7 +86,10 @@ class HomeViewModel extends BaseViewModel {
 
   _getEarthquakes(BuildContext context) async {
     EarthquakeRepository repository = EarthquakeRepository();
-    IngvResponse response = await repository.getEarthQuakes();
+    IngvResponse response = await repository.getEarthQuakes(
+      _currentPosition.longitude,
+      _currentPosition.latitude,
+    );
     _showMapLoader(false);
     if (response != null) {
       _handleResponse(response, context);

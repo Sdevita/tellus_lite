@@ -17,10 +17,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   double bottomPadding;
   Alignment bottomAlignment;
   Alignment topAlignment;
+  int _selectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       viewModel.init(context, themeChanger.isDarkModeTheme);
     });
@@ -47,10 +49,50 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       body: Stack(
         children: <Widget>[
           _buildMap(context),
-          _buildContainer(context),
-          _buildBottomMenu(),
           _buildHeader(context),
         ],
+      ),
+      extendBody: true,
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.only(
+              topRight: Radius.circular(30), topLeft: Radius.circular(30)),
+          boxShadow: [
+            BoxShadow(color: Colors.black38, spreadRadius: 0, blurRadius: 10),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(40.0),
+            topRight: Radius.circular(40.0),
+          ),
+          child: BottomNavigationBar(
+            elevation: 5,
+            backgroundColor: Theme.of(context).backgroundColor,
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home),
+                title: Text('Home'),
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.business),
+                title: Text('Business'),
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.school),
+                title: Text('School'),
+              ),
+            ],
+            currentIndex: _selectedIndex,
+            selectedItemColor: Theme.of(context).primaryColor,
+            onTap: (index) {
+              setState(() {
+                var date = DateTime.now().toIso8601String();
+                _selectedIndex = index;
+              });
+            },
+          ),
+        ),
       ),
     );
   }
@@ -120,49 +162,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             borderRadius:
                 BorderRadius.circular(MediaQuery.of(context).size.width * 0.3),
             color: Theme.of(context).backgroundColor),
-      ),
-    );
-  }
-
-  _buildBottomMenu() {
-    return Align(
-      alignment: bottomAlignment,
-      child: Container(
-        padding: EdgeInsets.all(10),
-        child: Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              MaterialButton(
-                child: Icon(
-                  Icons.map,
-                  color: Theme.of(context).primaryColor,
-                  size: 35,
-                ),
-                onPressed: () {
-                  viewModel.onGetMyLocation();
-                },
-                shape: CircleBorder(),
-              ),
-              MaterialButton(
-                child: Icon(
-                  Icons.multiline_chart,
-                  color: Theme.of(context).primaryColor,
-                  size: 35,
-                ),
-                onPressed: () {},
-                shape: CircleBorder(),
-              ),
-              MaterialButton(
-                child: Icon(
-                  Icons.message,
-                  color: Theme.of(context).primaryColor,
-                  size: 35,
-                ),
-                onPressed: () {},
-                shape: CircleBorder(),
-              ),
-            ]),
       ),
     );
   }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sailor/sailor.dart';
 import 'package:telluslite/feature/home/home_page.dart';
 import 'package:telluslite/feature/home/home_viewmodel.dart';
 import 'package:telluslite/feature/login/login_page.dart';
@@ -13,20 +12,23 @@ class Routes {
   static const String home = "/home";
   static const String login = "/login";
 
-
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case home:
-        return MaterialPageRoute(builder: (_) => ChangeNotifierProvider(
-          create: (_) => HomeViewModel(),
-          child: HomePage(),
-        ),);
+        return MaterialPageRoute(
+          builder: (_) => ChangeNotifierProvider(
+            create: (_) => HomeViewModel(),
+            child: HomePage(),
+          ),
+        );
       case settingsRoute:
-        return MaterialPageRoute(builder: (_) =>  ChangeNotifierProvider<SettingsViewModel>(
-            create: (_) => SettingsViewModel(), child: Settings()));
+        return MaterialPageRoute(
+            builder: (_) => ChangeNotifierProvider<SettingsViewModel>(
+                create: (_) => SettingsViewModel(), child: Settings()));
       case login:
-        return MaterialPageRoute(builder: (_) =>  ChangeNotifierProvider<LoginViewModel>(
-            create: (_) => LoginViewModel(), child: LoginPage()));
+        return MaterialPageRoute(
+            builder: (_) => ChangeNotifierProvider<LoginViewModel>(
+                create: (_) => LoginViewModel(), child: LoginPage()));
       default:
         return MaterialPageRoute(
             builder: (_) => Scaffold(
@@ -35,5 +37,4 @@ class Routes {
                 ));
     }
   }
-
 }

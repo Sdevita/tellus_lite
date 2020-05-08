@@ -1,4 +1,5 @@
 import 'dart:developer' as developer;
+import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 
@@ -20,13 +21,6 @@ class PushNotificationsManager {
 
   Future<void> init() async {
     if (!_initialized) {
-      // For iOS request permission first.
-      await _firebaseMessaging.requestNotificationPermissions();
-      _firebaseMessaging.onIosSettingsRegistered
-          .listen((IosNotificationSettings settings) {
-        print("Settings registered: $settings");
-      });
-      await _firebaseMessaging.subscribeToTopic("tellus");
       _firebaseMessaging.configure(
         //onBackgroundMessage: Platform.isIOS ? null : backgroundMessageHandler,
         onMessage: (Map<String, dynamic> message) async {
@@ -40,10 +34,19 @@ class PushNotificationsManager {
         },
       );
 
+      if (Platform.isIOS) {
+        // For iOS request permission first.
+        await _firebaseMessaging.requestNotificationPermissions();
+        _firebaseMessaging.onIosSettingsRegistered
+            .listen((IosNotificationSettings settings) {
+          print("Settings registered: $settings");
+        });
+      }
       // For testing purposes print the Firebase Messaging token
       _token = await _firebaseMessaging.getToken();
       print("FirebaseMessaging token: $_token");
       developer.log("FirebaseMessaging token: $_token");
+      await _firebaseMessaging.subscribeToTopic("tellus");
 
       _initialized = true;
     }
