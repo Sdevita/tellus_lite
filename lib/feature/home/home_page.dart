@@ -125,7 +125,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 visible: viewModel.showMapLoader,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: CircularProgressIndicator(),
+                  child: CircularProgressIndicator(
+                    backgroundColor: Theme.of(context).primaryColor,
+                  ),
                 ),
               ),
             ],

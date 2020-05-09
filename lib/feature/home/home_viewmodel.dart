@@ -19,11 +19,12 @@ class HomeViewModel extends BaseViewModel {
   bool showMapLoader = true;
 
   init(BuildContext context, bool isDarkMode) async {
-    _showMapLoader(loader);
+    _showMapLoader(true);
     _geolocator = Geolocator();
     _isDarkMode = isDarkMode;
     await onGetMyLocation();
-    _getEarthquakes(context);
+    await _getEarthquakes(context);
+    _showMapLoader(false);
   }
 
   onGetMyLocation() async {
@@ -90,7 +91,7 @@ class HomeViewModel extends BaseViewModel {
       _currentPosition.longitude,
       _currentPosition.latitude,
     );
-    _showMapLoader(false);
+
     if (response != null) {
       _handleResponse(response, context);
     }
