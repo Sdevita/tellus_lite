@@ -29,14 +29,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    print(state.toString());
-    if (state == AppLifecycleState.resumed) {
-      viewModel.setMapStyle(themeChanger.isDarkModeTheme);
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     viewModel = Provider.of<HomeViewModel>(context);
     themeChanger = Provider.of(context);
@@ -87,7 +79,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             selectedItemColor: Theme.of(context).primaryColor,
             onTap: (index) {
               setState(() {
-                var date = DateTime.now().toIso8601String();
                 _selectedIndex = index;
               });
             },
@@ -108,7 +99,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               IconButton(
@@ -117,8 +108,15 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 },
                 splashColor: Colors.transparent,
                 icon: Icon(
-                  Icons.menu,
+                  Icons.settings,
                   color: Theme.of(context).primaryColor,
+                ),
+              ),
+              Visibility(
+                visible: !viewModel.showMapLoader,
+                child: Text(
+                  "Tellus",
+                  style: TextStyle(fontSize: 20),
                 ),
               ),
               Visibility(
@@ -128,6 +126,16 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   child: CircularProgressIndicator(
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
+                ),
+              ),
+              IconButton(
+                onPressed: () {
+                  viewModel.goToFilters(context);
+                },
+                splashColor: Colors.transparent,
+                icon: Icon(
+                  Icons.filter_list,
+                  color: Theme.of(context).primaryColor,
                 ),
               ),
             ],

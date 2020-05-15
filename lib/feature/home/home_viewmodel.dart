@@ -9,6 +9,8 @@ import 'package:telluslite/network/model/response/feature.dart';
 import 'package:telluslite/network/model/response/ingv_response.dart';
 import 'package:telluslite/network/repositories/earthquake_repository.dart';
 
+enum HomeState { Map, Details, Notification }
+
 class HomeViewModel extends BaseViewModel {
   List<Feature> _earthquakeList;
   GoogleMapController _mapController;
@@ -17,12 +19,17 @@ class HomeViewModel extends BaseViewModel {
   bool _isDarkMode = false;
   Set<Marker> _markers;
   bool showMapLoader = true;
+  HomeState _homeState = HomeState.Map;
+  Map<String, dynamic> notificationModel;
+
+  HomeViewModel({this.notificationModel});
 
   init(BuildContext context, bool isDarkMode) async {
     _showMapLoader(true);
     _geolocator = Geolocator();
     _isDarkMode = isDarkMode;
     await onGetMyLocation();
+    await showNotificationDetails();
     await _getEarthquakes(context);
     _showMapLoader(false);
   }
@@ -30,12 +37,38 @@ class HomeViewModel extends BaseViewModel {
   onGetMyLocation() async {
     _currentPosition = await _geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.medium);
-    if (_currentPosition != null && _mapController != null) {
+    if (_currentPosition != null &&
+        _mapController != null &&
+        notificationModel == null) {
       var camera = CameraPosition(
           target: LatLng(_currentPosition.latitude, _currentPosition.longitude),
           zoom: 7);
       _mapController?.moveCamera(CameraUpdate.newCameraPosition(camera));
     }
+  }
+
+  showNotificationDetails() async {
+    if (notificationModel == null) {
+      return;
+    }
+
+    if (notificationModel.containsKey('data')) {
+      _homeState = HomeState.Notification;
+      await _showDetail(notificationModel['data']);
+    } else {
+      // from on message
+      await _showDetail(notificationModel);
+    }
+  }
+
+  _showDetail(data) async {
+    var lat = double.parse(data['latitude']);
+    var lon = double.parse(data['longitude']);
+
+    var camera = CameraPosition(target: LatLng(lat, lon), zoom: 13);
+    await _mapController.animateCamera(CameraUpdate.newCameraPosition(camera));
+    notificationModel = null;
+    notifyListeners();
   }
 
   onMapCreated(GoogleMapController controller) {
@@ -128,6 +161,12 @@ class HomeViewModel extends BaseViewModel {
     var isDarkMode =
         await Navigator.of(context).pushNamed(Routes.settingsRoute);
     setMapStyle(isDarkMode);
+  }
+
+  goToFilters(BuildContext context) async {
+    Navigator.of(context).pushNamed(
+      Routes.mapFilters,
+    );
   }
 
   Set<Marker> get markers => _markers;

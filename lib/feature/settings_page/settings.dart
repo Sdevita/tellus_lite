@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:telluslite/common/base_widget.dart';
 import 'package:telluslite/common/theme/theme_changer.dart';
-import 'package:telluslite/common/widgets/app_bar.dart';
+import 'package:telluslite/common/widgets/appbar/app_bar.dart';
 import 'package:telluslite/feature/settings_page/settings_viewmodel.dart';
 
 class Settings extends StatefulWidget {

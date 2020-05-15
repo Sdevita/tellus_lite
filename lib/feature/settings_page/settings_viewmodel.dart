@@ -33,7 +33,7 @@ class SettingsViewModel extends BaseViewModel {
     }
     if (status.isGranted) {
       showLoader();
-      await PushNotificationsManager().init();
+      await PushNotificationsManager().enable();
       hideLoader();
     }
   }

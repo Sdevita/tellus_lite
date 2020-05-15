@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer' as developer;
 import 'dart:io';
 
@@ -13,27 +14,16 @@ class PushNotificationsManager {
 
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
+  StreamController<Map<String, dynamic>> notificationStream;
+
   bool _initialized = false;
 
   String _token;
 
   String get token => _token;
 
-  Future<void> init() async {
+  Future<void> enable() async {
     if (!_initialized) {
-      _firebaseMessaging.configure(
-        //onBackgroundMessage: Platform.isIOS ? null : backgroundMessageHandler,
-        onMessage: (Map<String, dynamic> message) async {
-          print("onMessage: $message");
-        },
-        onLaunch: (Map<String, dynamic> message) async {
-          print("onLaunch: $message");
-        },
-        onResume: (Map<String, dynamic> message) async {
-          print("onResume: $message");
-        },
-      );
-
       if (Platform.isIOS) {
         // For iOS request permission first.
         await _firebaseMessaging.requestNotificationPermissions();
@@ -50,6 +40,27 @@ class PushNotificationsManager {
 
       _initialized = true;
     }
+  }
+
+  // NOTE call ever before enable()
+  void init() {
+    notificationStream = StreamController();
+
+    _firebaseMessaging.configure(
+      //onBackgroundMessage: Platform.isIOS ? null : backgroundMessageHandler,
+      onMessage: (Map<String, dynamic> message) async {
+        developer.log("onMessage: $message");
+        notificationStream.sink.add(message);
+      },
+      onLaunch: (Map<String, dynamic> message) async {
+        developer.log("onLaunch: $message");
+        notificationStream.sink.add(message);
+      },
+      onResume: (Map<String, dynamic> message) async {
+        developer.log("onResume: $message");
+        notificationStream.sink.add(message);
+      },
+    );
   }
 
   static Future<dynamic> backgroundMessageHandler(
