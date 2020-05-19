@@ -154,6 +154,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           CameraPosition(target: viewModel.initialPosition, zoom: 7),
       myLocationEnabled: true,
       myLocationButtonEnabled: false,
+      zoomControlsEnabled: false,
+      mapToolbarEnabled: true,
       markers: viewModel.markers,
       onMapCreated: (GoogleMapController controller) {
         viewModel.onMapCreated(controller);

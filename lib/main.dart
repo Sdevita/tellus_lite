@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:telluslite/common/theme/theme_changer.dart';
@@ -17,7 +15,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top]);
-    PushNotificationsManager().init();
     return ChangeNotifierProvider<ThemeChanger>(
         create: (_) {
           ThemeChanger themeChanger = ThemeChanger();
@@ -35,26 +32,10 @@ class MaterialAppWithTheme extends StatefulWidget {
 
 class _MaterialAppWithThemeState extends State<MaterialAppWithTheme>
     with WidgetsBindingObserver {
-  final GlobalKey<NavigatorState> navigatorKey =
-      GlobalKey(debugLabel: "Main Navigator");
-
-  StreamSubscription _notificationSubscription;
-
   @override
   void initState() {
+    PushNotificationsManager().init();
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _notificationSubscription = PushNotificationsManager()
-          .notificationStream
-          .stream
-          .asBroadcastStream()
-          .listen((notification) {
-        if (notification != null) {
-          _goToMapView(context, notification);
-        }
-      });
-    });
   }
 
   @override
@@ -62,20 +43,13 @@ class _MaterialAppWithThemeState extends State<MaterialAppWithTheme>
     final theme = Provider.of<ThemeChanger>(context);
 
     return MaterialApp(
-      navigatorKey: navigatorKey,
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: theme.themeData,
       darkTheme: Themes.darkTheme(context),
-      initialRoute: Routes.login,
+      initialRoute: Routes.splash,
       onGenerateRoute: Routes.generateRoute,
     );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _notificationSubscription?.cancel();
   }
 
   @override
@@ -83,11 +57,5 @@ class _MaterialAppWithThemeState extends State<MaterialAppWithTheme>
     print(WidgetsBinding.instance.window
         .platformBrightness); // should print Brightness.light / Brightness.dark when you switch
     super.didChangePlatformBrightness(); // make sure you call this
-  }
-
-  _goToMapView(BuildContext context, Map<String, dynamic> notificationModel) {
-    navigatorKey.currentState.pushNamedAndRemoveUntil(
-        Routes.home, (route) => false,
-        arguments: notificationModel);
   }
 }

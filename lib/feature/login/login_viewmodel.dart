@@ -5,31 +5,14 @@ import 'package:telluslite/common/validators/fields_validator.dart';
 import 'package:telluslite/common/widgets/Dialogs.dart';
 import 'package:telluslite/navigation/Routes.dart';
 import 'package:telluslite/network/repositories/firebase_auth_repository.dart';
-import 'package:telluslite/persistent/repositories/secure_store_repository.dart';
 
 class LoginViewModel extends BaseViewModel {
   String _email;
   String _password;
   bool _obscurePassword = true;
 
-  init(BuildContext context) async{
-    var authRepo = FireBaseAuthRepository();
-
-    showLoader();
-
-    bool isUserLogged = await authRepo.isUserLogged();
-    bool isDarkMode = await SecureStoreRepository().hasDarkModeSaved();
-
-    hideLoader();
-
-    if(isDarkMode){
-
-    }
-
-    if(isUserLogged){
-      goToHome(context);
-    }
-
+  init(BuildContext context) {
+    // todo
   }
 
   onEmailChanged(String email) {
@@ -85,14 +68,14 @@ class LoginViewModel extends BaseViewModel {
       }
 
       if (user != null) {
-          goToHome(context);
+        goToHome(context);
       }
     }
   }
 
-  goToHome(BuildContext context){
-    Navigator.of(context).pushNamedAndRemoveUntil(
-        Routes.home, (Route<dynamic> route) => false);
+  goToHome(BuildContext context) {
+    Navigator.of(context)
+        .pushNamedAndRemoveUntil(Routes.home, (Route<dynamic> route) => false);
   }
 
   validateEmail(String email) {

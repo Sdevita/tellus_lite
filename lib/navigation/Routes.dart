@@ -8,12 +8,15 @@ import 'package:telluslite/feature/map_filters/filters_screen.dart';
 import 'package:telluslite/feature/map_filters/filters_viewmodel.dart';
 import 'package:telluslite/feature/settings_page/settings.dart';
 import 'package:telluslite/feature/settings_page/settings_viewmodel.dart';
+import 'package:telluslite/feature/splash/splash_page.dart';
+import 'package:telluslite/feature/splash/splash_viewmodel.dart';
 
 class Routes {
   static const String settingsRoute = "/settings";
   static const String home = "/home";
   static const String login = "/login";
   static const String mapFilters = "/mapFilters";
+  static const String splash = "/";
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -56,12 +59,10 @@ class Routes {
             );
           },
         );
-      default:
+      case splash:
         return MaterialPageRoute(
-            builder: (_) => Scaffold(
-                  body: Center(
-                      child: Text('No route defined for ${settings.name}')),
-                ));
+            builder: (_) => ChangeNotifierProvider<SplashViewModel>(
+                create: (_) => SplashViewModel(), child: SplashPage()));
     }
   }
 }
