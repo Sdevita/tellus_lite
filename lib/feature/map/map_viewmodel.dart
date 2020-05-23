@@ -9,9 +9,9 @@ import 'package:telluslite/network/model/response/feature.dart';
 import 'package:telluslite/network/model/response/ingv_response.dart';
 import 'package:telluslite/network/repositories/earthquake_repository.dart';
 
-enum HomeState { Map, Details, Notification }
+enum MapState { Map, Details, Notification }
 
-class HomeViewModel extends BaseViewModel {
+class MapViewModel extends BaseViewModel {
   List<Feature> _earthquakeList;
   GoogleMapController _mapController;
   Geolocator _geolocator;
@@ -19,10 +19,10 @@ class HomeViewModel extends BaseViewModel {
   bool _isDarkMode = false;
   Set<Marker> _markers;
   bool showMapLoader = true;
-  HomeState _homeState = HomeState.Map;
+  MapState _homeState = MapState.Map;
   Map<String, dynamic> notificationModel;
 
-  HomeViewModel({this.notificationModel});
+  MapViewModel({this.notificationModel});
 
   init(BuildContext context, bool isDarkMode) async {
     _showMapLoader(true);
@@ -53,7 +53,7 @@ class HomeViewModel extends BaseViewModel {
     }
 
     if (notificationModel.containsKey('data')) {
-      _homeState = HomeState.Notification;
+      _homeState = MapState.Notification;
       await _showDetail(notificationModel['data']);
     } else {
       // from on message

@@ -4,20 +4,19 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:telluslite/common/theme/theme_changer.dart';
 
-import 'home_viewmodel.dart';
+import 'map_viewmodel.dart';
 
-class HomePage extends StatefulWidget {
+class MapPage extends StatefulWidget {
   @override
-  _HomePageState createState() => _HomePageState();
+  _MapPageState createState() => _MapPageState();
 }
 
-class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
-  HomeViewModel viewModel;
+class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
+  MapViewModel viewModel;
   ThemeChanger themeChanger;
   double bottomPadding;
   Alignment bottomAlignment;
   Alignment topAlignment;
-  int _selectedIndex = 0;
 
   @override
   void initState() {
@@ -30,7 +29,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    viewModel = Provider.of<HomeViewModel>(context);
+    viewModel = Provider.of<MapViewModel>(context);
     themeChanger = Provider.of(context);
     double mqPTop = MediaQuery.of(context).padding.top;
     bottomPadding = MediaQuery.of(context).padding.bottom;
@@ -43,47 +42,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           _buildMap(context),
           _buildHeader(context),
         ],
-      ),
-      extendBody: true,
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(
-              topRight: Radius.circular(30), topLeft: Radius.circular(30)),
-          boxShadow: [
-            BoxShadow(color: Colors.black38, spreadRadius: 0, blurRadius: 10),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(40.0),
-            topRight: Radius.circular(40.0),
-          ),
-          child: BottomNavigationBar(
-            elevation: 5,
-            backgroundColor: Theme.of(context).backgroundColor,
-            items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: Icon(Icons.home),
-                title: Text('Home'),
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.business),
-                title: Text('Business'),
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.school),
-                title: Text('School'),
-              ),
-            ],
-            currentIndex: _selectedIndex,
-            selectedItemColor: Theme.of(context).primaryColor,
-            onTap: (index) {
-              setState(() {
-                _selectedIndex = index;
-              });
-            },
-          ),
-        ),
       ),
     );
   }
@@ -161,31 +119,5 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         viewModel.onMapCreated(controller);
       },
     );
-  }
-
-  _buildContainer(BuildContext context) {
-    return Align(
-      alignment: bottomAlignment,
-      child: Container(
-        width: MediaQuery.of(context).size.width - 20,
-        height: MediaQuery.of(context).size.height * 0.08,
-        padding: const EdgeInsets.all(20.0),
-        decoration: BoxDecoration(
-            borderRadius:
-                BorderRadius.circular(MediaQuery.of(context).size.width * 0.3),
-            color: Theme.of(context).backgroundColor),
-      ),
-    );
-  }
-
-  _buildList(BuildContext context) {
-    return ListView.separated(
-        itemBuilder: (BuildContext context, int index) {
-          return ListTile(
-            title: Text('${viewModel.earthquakeList[index].properties.place}'),
-          );
-        },
-        separatorBuilder: (BuildContext context, int index) => Divider(),
-        itemCount: viewModel.earthquakeList.length);
   }
 }

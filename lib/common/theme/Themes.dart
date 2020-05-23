@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:telluslite/common/constants/app_colors.dart';
 
 class Themes {
   static ThemeData basicTheme(BuildContext context) {
     return ThemeData(
       brightness: Brightness.light,
+      unselectedWidgetColor: Colors.grey,
       accentColor: Colors.white,
-      primaryColor: Colors.green,
+      primaryColor: Colors.blue,
       backgroundColor: Colors.white,
       appBarTheme: AppBarTheme(brightness: Brightness.light),
-      buttonColor: Colors.green[700],
+      buttonColor: Colors.blue[700],
       canvasColor: Colors.white,
       textTheme: GoogleFonts.latoTextTheme(
         Theme.of(context).textTheme,
@@ -20,11 +22,12 @@ class Themes {
   static ThemeData darkTheme(BuildContext context) {
     return ThemeData(
       brightness: Brightness.dark,
-      accentColor: Colors.white,
-      backgroundColor: Colors.blueGrey[700],
-      buttonColor: Colors.blueGrey,
-      primaryColor: Colors.white,
-      canvasColor: Colors.black12,
+      unselectedWidgetColor: Colors.white,
+      accentColor: Colors.blue,
+      backgroundColor: AppColors.darkGray,
+      buttonColor: AppColors.darkPrimary,
+      primaryColor: Colors.blue,
+      canvasColor: AppColors.darkGray,
       appBarTheme: AppBarTheme(brightness: Brightness.dark),
       textTheme: GoogleFonts.latoTextTheme(
         Theme.of(context).textTheme,

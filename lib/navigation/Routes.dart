@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:telluslite/feature/home/home_page.dart';
-import 'package:telluslite/feature/home/home_viewmodel.dart';
 import 'package:telluslite/feature/login/login_page.dart';
 import 'package:telluslite/feature/login/login_viewmodel.dart';
+import 'package:telluslite/feature/map/map_page.dart';
+import 'package:telluslite/feature/map/map_viewmodel.dart';
 import 'package:telluslite/feature/map_filters/filters_screen.dart';
 import 'package:telluslite/feature/map_filters/filters_viewmodel.dart';
 import 'package:telluslite/feature/settings_page/settings.dart';
@@ -25,9 +25,9 @@ class Routes {
         return MaterialPageRoute(
           builder: (_) => ChangeNotifierProvider(
             create: (_) => notification != null
-                ? HomeViewModel(notificationModel: notification)
-                : HomeViewModel(),
-            child: HomePage(),
+                ? MapViewModel(notificationModel: notification)
+                : MapViewModel(),
+            child: MapPage(),
           ),
         );
       case settingsRoute:

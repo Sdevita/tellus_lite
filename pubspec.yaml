@@ -23,16 +23,17 @@ dependencies:
   sailor: ^0.7.1
   pretty_dio_logger: ^1.1.1
   firebase_auth: ^0.16.0
-  google_maps_flutter: ^0.5.27+1
+  google_maps_flutter: ^0.5.28+1
   geolocator: ^5.3.1
-  google_fonts: ^1.0.0
+  google_fonts: ^1.1.0
   flutter_statusbar_text_color: ^0.1.2
-  firebase_messaging: ^6.0.13
+  firebase_messaging: ^6.0.15
   firebase_core: ^0.4.4+3
   flutter_svg: ^0.17.4
-  shared_preferences: ^0.5.7+1
-  permission_handler: ^5.0.0+hotfix.5
+  shared_preferences: ^0.5.7+3
+  permission_handler: ^5.0.0+hotfix.6
   intl: ^0.16.1
+  flutter_speed_dial: ^1.2.5
   #flutter_local_notifications: ^1.4.2
   #cloud_firestore: ^0.13.5
   flutter:
