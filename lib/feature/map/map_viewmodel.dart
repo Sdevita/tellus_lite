@@ -13,6 +13,7 @@ enum MapState { Map, Details, Notification }
 
 class MapViewModel extends BaseViewModel {
   List<Feature> _earthquakeList;
+  PageController pageController = PageController(viewportFraction: 0.8);
   GoogleMapController _mapController;
   Geolocator _geolocator;
   Position _currentPosition;
@@ -31,6 +32,12 @@ class MapViewModel extends BaseViewModel {
     await onGetMyLocation();
     await showNotificationDetails();
     await _getEarthquakes(context);
+    pageController.addListener(() {
+      int currentIndex = pageController.page.toInt();
+      var latitude = _earthquakeList[currentIndex]?.geometry?.coordinates[1];
+      var longitude = _earthquakeList[currentIndex]?.geometry?.coordinates[0];
+      _showDetail(latitude, longitude, false);
+    });
     _showMapLoader(false);
   }
 
@@ -54,20 +61,24 @@ class MapViewModel extends BaseViewModel {
 
     if (notificationModel.containsKey('data')) {
       _homeState = MapState.Notification;
-      await _showDetail(notificationModel['data']);
+      var data = notificationModel['data'];
+      var lat = double.parse(data['latitude']);
+      var lon = double.parse(data['longitude']);
+      await _showDetail(lat, lon, true);
     } else {
       // from on message
-      await _showDetail(notificationModel);
+      var lat = double.parse(notificationModel['latitude']);
+      var lon = double.parse(notificationModel['longitude']);
+      await _showDetail(lat, lon, true);
     }
   }
 
-  _showDetail(data) async {
-    var lat = double.parse(data['latitude']);
-    var lon = double.parse(data['longitude']);
-
-    var camera = CameraPosition(target: LatLng(lat, lon), zoom: 13);
+  _showDetail(double lat, double lon, bool isFromNotification) async {
+    var camera = CameraPosition(target: LatLng(lat, lon), zoom: 8);
     await _mapController.animateCamera(CameraUpdate.newCameraPosition(camera));
-    notificationModel = null;
+    if (isFromNotification) {
+      notificationModel = null;
+    }
     notifyListeners();
   }
 
@@ -147,8 +158,6 @@ class MapViewModel extends BaseViewModel {
     }
   }
 
-  GoogleMapController get mapController => _mapController;
-
   LatLng get initialPosition {
     if (_currentPosition == null) {
       return LatLng(41.89193, 12.51133);
@@ -170,4 +179,8 @@ class MapViewModel extends BaseViewModel {
   }
 
   Set<Marker> get markers => _markers;
+
+  Position get currentPosition => _currentPosition;
+
+  GoogleMapController get mapController => _mapController;
 }

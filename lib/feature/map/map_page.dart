@@ -14,6 +14,7 @@ class MapPage extends StatefulWidget {
 class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
   MapViewModel viewModel;
   ThemeChanger themeChanger;
+  ThemeData theme;
   double bottomPadding;
   Alignment bottomAlignment;
   Alignment topAlignment;
@@ -31,6 +32,7 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     viewModel = Provider.of<MapViewModel>(context);
     themeChanger = Provider.of(context);
+    theme = Theme.of(context);
     double mqPTop = MediaQuery.of(context).padding.top;
     bottomPadding = MediaQuery.of(context).padding.bottom;
     bottomAlignment = Alignment(0.0, 1 - (bottomPadding + 40) / 1000);
@@ -41,6 +43,7 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
         children: <Widget>[
           _buildMap(context),
           _buildHeader(context),
+          _buildBottomWidget(context)
         ],
       ),
     );
@@ -82,7 +85,7 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: CircularProgressIndicator(
-                    backgroundColor: Theme.of(context).primaryColor,
+                    backgroundColor: theme.primaryColor,
                   ),
                 ),
               ),
@@ -93,7 +96,7 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
                 splashColor: Colors.transparent,
                 icon: Icon(
                   Icons.filter_list,
-                  color: Theme.of(context).primaryColor,
+                  color: theme.primaryColor,
                 ),
               ),
             ],
@@ -105,9 +108,9 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
 
   _buildMap(BuildContext context) {
     return GoogleMap(
-      padding: EdgeInsets.only(
+      /* padding: EdgeInsets.only(
           bottom: (MediaQuery.of(context).size.height * 0.11) -
-              MediaQuery.of(context).padding.bottom),
+              MediaQuery.of(context).padding.bottom),*/
       initialCameraPosition:
           CameraPosition(target: viewModel.initialPosition, zoom: 7),
       myLocationEnabled: true,
@@ -118,6 +121,37 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
       onMapCreated: (GoogleMapController controller) {
         viewModel.onMapCreated(controller);
       },
+    );
+  }
+
+  _buildBottomWidget(BuildContext context) {
+    return Align(
+      alignment: Alignment(0.0, 0.9),
+      child: FractionallySizedBox(
+        heightFactor: 0.2,
+        child: PageView.builder(
+          itemCount: viewModel.earthquakeList.length,
+          // store this controller in a State to save the carousel scroll position
+          controller: viewModel.pageController,
+          itemBuilder: (BuildContext context, int itemIndex) {
+            return _buildCarouselItem(context, 1, itemIndex);
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCarouselItem(
+      BuildContext context, int carouselIndex, int itemIndex) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 4.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: theme.backgroundColor,
+          borderRadius: BorderRadius.all(Radius.circular(4.0)),
+        ),
+        child: Text(viewModel.earthquakeList[itemIndex].properties.place),
+      ),
     );
   }
 }
