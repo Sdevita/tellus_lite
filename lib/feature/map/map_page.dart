@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:telluslite/common/theme/theme_changer.dart';
+import 'package:telluslite/common/widgets/map/card/earthquake_list_card.dart';
 
 import 'map_viewmodel.dart';
 
@@ -18,6 +19,9 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
   double bottomPadding;
   Alignment bottomAlignment;
   Alignment topAlignment;
+  MediaQueryData mq;
+  double detailBoxHeight;
+  double headerWidth;
 
   @override
   void initState() {
@@ -33,17 +37,21 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
     viewModel = Provider.of<MapViewModel>(context);
     themeChanger = Provider.of(context);
     theme = Theme.of(context);
+    mq = MediaQuery.of(context);
     double mqPTop = MediaQuery.of(context).padding.top;
     bottomPadding = MediaQuery.of(context).padding.bottom;
     bottomAlignment = Alignment(0.0, 1 - (bottomPadding + 40) / 1000);
     topAlignment = Alignment(0.0, -(1 - ((mqPTop + 60) / 1000)));
+    detailBoxHeight = viewModel.detailsCardHeight ?? 0;
+    headerWidth = viewModel.headerWidth ?? mq.size.width / 2;
 
     return Scaffold(
       body: Stack(
         children: <Widget>[
           _buildMap(context),
           _buildHeader(context),
-          _buildBottomWidget(context)
+          _buildBottomWidget(context),
+          _buildDetails(context),
         ],
       ),
     );
@@ -52,16 +60,20 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
   _buildHeader(BuildContext context) {
     return Align(
       alignment: topAlignment,
-      child: Container(
-        width: MediaQuery.of(context).size.width / 2,
+      child: AnimatedContainer(
+        duration: Duration(milliseconds: 200),
+        curve: Curves.easeInCirc,
+        width: headerWidth,
+        onEnd: () {
+          //viewModel.changeHeaderTitle();
+        },
         decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(50)),
             color: Theme.of(context).backgroundColor),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               IconButton(
                 onPressed: () {
@@ -73,22 +85,21 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
                   color: Theme.of(context).primaryColor,
                 ),
               ),
-              Visibility(
-                visible: !viewModel.showMapLoader,
-                child: Text(
-                  "Tellus",
-                  style: TextStyle(fontSize: 20),
-                ),
-              ),
-              Visibility(
-                visible: viewModel.showMapLoader,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: CircularProgressIndicator(
-                    backgroundColor: theme.primaryColor,
-                  ),
-                ),
-              ),
+              !viewModel.showMapLoader
+                  ? Flexible(
+                      child: Text(
+                        viewModel.headerTitle,
+                        textAlign: TextAlign.center,
+                        style:
+                            TextStyle(fontSize: 20, color: theme.primaryColor),
+                      ),
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CircularProgressIndicator(
+                        backgroundColor: theme.primaryColor,
+                      ),
+                    ),
               IconButton(
                 onPressed: () {
                   viewModel.goToFilters(context);
@@ -127,30 +138,67 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
   _buildBottomWidget(BuildContext context) {
     return Align(
       alignment: Alignment(0.0, 0.9),
-      child: FractionallySizedBox(
-        heightFactor: 0.2,
+      child: Container(
+        height: mq.size.height / 5.5,
         child: PageView.builder(
           itemCount: viewModel.earthquakeList.length,
           // store this controller in a State to save the carousel scroll position
           controller: viewModel.pageController,
           itemBuilder: (BuildContext context, int itemIndex) {
-            return _buildCarouselItem(context, 1, itemIndex);
+            var event = viewModel.earthquakeList[itemIndex];
+            return EarthQuakeListCard(
+              title: event.properties.place,
+              magnitude: event.properties.mag,
+              onTopTapped: () {
+                viewModel.onTopTapped(itemIndex);
+              },
+            );
           },
         ),
       ),
     );
   }
 
-  Widget _buildCarouselItem(
-      BuildContext context, int carouselIndex, int itemIndex) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 4.0),
-      child: Container(
+  _buildDetails(BuildContext context) {
+    var event = viewModel?.selectedEvent;
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: AnimatedContainer(
+        duration: Duration(milliseconds: 200),
+        curve: Curves.easeInCirc,
+        height: detailBoxHeight,
         decoration: BoxDecoration(
           color: theme.backgroundColor,
-          borderRadius: BorderRadius.all(Radius.circular(4.0)),
+          borderRadius: BorderRadius.circular(25.0),
         ),
-        child: Text(viewModel.earthquakeList[itemIndex].properties.place),
+        child: Stack(
+          children: <Widget>[
+            Positioned(
+              left: 16,
+              top: 16,
+              child: Container(
+                constraints: BoxConstraints(maxWidth: mq.size.width * 0.8),
+                child: Text(
+                  event?.properties?.place ?? "",
+                  style: TextStyle(fontSize: 18, color: theme.primaryColor),
+                ),
+              ),
+            ),
+            Positioned(
+              right: 5,
+              top: 5,
+              child: IconButton(
+                onPressed: () {
+                  viewModel.onCloseDetail();
+                },
+                icon: Icon(
+                  Icons.clear,
+                  color: theme.primaryColor,
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

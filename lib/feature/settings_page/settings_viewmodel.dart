@@ -1,14 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:telluslite/common/base_viewmodel.dart';
-import 'package:telluslite/common/constants/app_key.dart';
 import 'package:telluslite/navigation/Routes.dart';
 import 'package:telluslite/network/repositories/firebase_auth_repository.dart';
+import 'package:telluslite/persistent/repositories/secure_store_repository.dart';
 import 'package:telluslite/push_notification/push_notification_manager.dart';
 
 class SettingsViewModel extends BaseViewModel {
   bool switchValue = false;
+
+  init() async {
+    SecureStoreRepository secureStoreRepository = SecureStoreRepository();
+    switchValue = await secureStoreRepository.hasDarkModeSaved();
+    notifyListeners();
+  }
 
   logout(BuildContext context) {
     var firebaseRepo = FireBaseAuthRepository();
@@ -21,8 +26,12 @@ class SettingsViewModel extends BaseViewModel {
   onSwitchChange(bool isDarkMode) async {
     this.switchValue = isDarkMode;
     notifyListeners();
-    var preference = await SharedPreferences.getInstance();
-    preference.setBool(AppKeys.DARK_MODE_KEY, isDarkMode);
+    _savePreference();
+  }
+
+  _savePreference() {
+    SecureStoreRepository secureStoreRepository = SecureStoreRepository();
+    secureStoreRepository.saveDarkModeSettings(switchValue);
   }
 
   enableNotification() async {
@@ -36,5 +45,9 @@ class SettingsViewModel extends BaseViewModel {
       await PushNotificationsManager().enable();
       hideLoader();
     }
+  }
+
+  onBack(BuildContext context) {
+    Navigator.pop(context, switchValue);
   }
 }

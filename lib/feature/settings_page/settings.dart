@@ -11,20 +11,32 @@ class Settings extends StatefulWidget {
   _SettingsState createState() => _SettingsState();
 }
 
-class _SettingsState extends State<Settings> {
+class _SettingsState extends State<Settings> with WidgetsBindingObserver {
   SettingsViewModel viewModel;
   ThemeChanger themeChanger;
+  ThemeData theme;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      viewModel.init();
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     viewModel = Provider.of(context);
     themeChanger = Provider.of(context);
+    theme = Theme.of(context);
+
     return BaseWidget(
       loader: viewModel.loader,
       appBar: TellusAppBar(
         leftIcon: Icons.arrow_back_ios,
         onLeftButtonTapped: () {
-          Navigator.of(context).pop();
+          viewModel.onBack(context);
         },
       ),
       body: Center(
@@ -46,10 +58,10 @@ class _SettingsState extends State<Settings> {
         children: <Widget>[
           Text(
             "Enable dark mode",
-            style: TextStyle(fontSize: 16),
+            style: TextStyle(fontSize: 16, color: theme.primaryColor),
           ),
-          CupertinoSwitch(
-            activeColor: Theme.of(context).buttonColor,
+          Switch.adaptive(
+            activeColor: Theme.of(context).primaryColor,
             value: viewModel.switchValue,
             onChanged: (isDarkMode) {
               if (isDarkMode) {

@@ -31,7 +31,7 @@ class Routes {
           ),
         );
       case settingsRoute:
-        return MaterialPageRoute(
+        return MaterialPageRoute<bool>(
             builder: (_) => ChangeNotifierProvider<SettingsViewModel>(
                 create: (_) => SettingsViewModel(), child: Settings()));
       case login:

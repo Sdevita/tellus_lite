@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:telluslite/common/base_viewmodel.dart';
+import 'package:telluslite/common/constants/app_constants.dart';
 import 'package:telluslite/common/widgets/Dialogs.dart';
 import 'package:telluslite/navigation/Routes.dart';
 import 'package:telluslite/network/model/response/feature.dart';
@@ -13,6 +14,7 @@ enum MapState { Map, Details, Notification }
 
 class MapViewModel extends BaseViewModel {
   List<Feature> _earthquakeList;
+  Feature _selectedEvent;
   PageController pageController = PageController(viewportFraction: 0.8);
   GoogleMapController _mapController;
   Geolocator _geolocator;
@@ -20,12 +22,17 @@ class MapViewModel extends BaseViewModel {
   bool _isDarkMode = false;
   Set<Marker> _markers;
   bool showMapLoader = true;
-  MapState _homeState = MapState.Map;
+  MapState _mapState = MapState.Map;
   Map<String, dynamic> notificationModel;
+  MediaQueryData mediaQuery;
+  double detailsCardHeight;
+  double headerWidth;
+  String headerTitle = AppConstants.APP_NAME;
 
   MapViewModel({this.notificationModel});
 
   init(BuildContext context, bool isDarkMode) async {
+    mediaQuery = MediaQuery.of(context);
     _showMapLoader(true);
     _geolocator = Geolocator();
     _isDarkMode = isDarkMode;
@@ -60,7 +67,7 @@ class MapViewModel extends BaseViewModel {
     }
 
     if (notificationModel.containsKey('data')) {
-      _homeState = MapState.Notification;
+      _mapState = MapState.Notification;
       var data = notificationModel['data'];
       var lat = double.parse(data['latitude']);
       var lon = double.parse(data['longitude']);
@@ -74,7 +81,16 @@ class MapViewModel extends BaseViewModel {
   }
 
   _showDetail(double lat, double lon, bool isFromNotification) async {
-    var camera = CameraPosition(target: LatLng(lat, lon), zoom: 8);
+    var camera;
+    if (_mapState == MapState.Details) {
+      detailsCardHeight = mediaQuery.size.height / 3;
+      headerWidth = mediaQuery.size.width - 50;
+      camera = CameraPosition(target: LatLng(lat, lon), zoom: 14);
+    } else {
+      camera = CameraPosition(target: LatLng(lat, lon), zoom: 8);
+      detailsCardHeight = 0;
+      headerWidth = mediaQuery.size.width / 2;
+    }
     await _mapController.animateCamera(CameraUpdate.newCameraPosition(camera));
     if (isFromNotification) {
       notificationModel = null;
@@ -120,13 +136,45 @@ class MapViewModel extends BaseViewModel {
   }
 
   setMapStyle(bool isDarkMode) async {
-    String stylePath = _isDarkMode
+    String stylePath = isDarkMode
         ? 'assets/map_style/blue_dark_map.json'
         : 'assets/map_style/x_spot_style.json';
     _showMapLoader(true);
     String style = await rootBundle.loadString(stylePath);
     _showMapLoader(false);
     _mapController.setMapStyle(style);
+  }
+
+  onTopTapped(int index) {
+    if (_mapState != MapState.Details) {
+      _mapState = MapState.Details;
+      var event = _earthquakeList[index];
+      _selectedEvent = event;
+      var latitude = event?.geometry?.coordinates[1];
+      var longitude = event?.geometry?.coordinates[0];
+      _showDetail(latitude, longitude, false);
+    }
+  }
+
+  onCloseDetail() {
+    _mapState = MapState.Map;
+    _updateUI();
+  }
+
+  _updateUI() {
+    switch (_mapState) {
+      case MapState.Map:
+        _mapController.animateCamera(CameraUpdate.zoomTo(8));
+        detailsCardHeight = 0;
+        headerWidth = mediaQuery.size.width / 2;
+        break;
+      case MapState.Details:
+
+      case MapState.Notification:
+        // TODO: Handle this case.
+        break;
+    }
+    notifyListeners();
   }
 
   _getEarthquakes(BuildContext context) async {
@@ -167,8 +215,8 @@ class MapViewModel extends BaseViewModel {
   }
 
   goToSettings(BuildContext context) async {
-    var isDarkMode =
-        await Navigator.of(context).pushNamed(Routes.settingsRoute);
+    bool isDarkMode =
+        await Navigator.of(context).pushNamed(Routes.settingsRoute) ?? false;
     setMapStyle(isDarkMode);
   }
 
@@ -183,4 +231,8 @@ class MapViewModel extends BaseViewModel {
   Position get currentPosition => _currentPosition;
 
   GoogleMapController get mapController => _mapController;
+
+  MapState get state => _mapState;
+
+  Feature get selectedEvent => _selectedEvent;
 }

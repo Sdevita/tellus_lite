@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:telluslite/common/theme/theme_changer.dart';
+import 'package:telluslite/persistent/repositories/secure_store_repository.dart';
 import 'package:telluslite/push_notification/push_notification_manager.dart';
 
 import 'common/theme/Themes.dart';
@@ -10,15 +11,35 @@ void main() async {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   // This widget is the root of your application.
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  bool isDarkMode = false;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      var dark = await SecureStoreRepository().hasDarkModeSaved();
+      setState(() {
+        isDarkMode = dark;
+      });
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     //SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top]);
     return ChangeNotifierProvider<ThemeChanger>(
         create: (_) {
           ThemeChanger themeChanger = ThemeChanger();
-          themeChanger.setLightMode(context);
+          isDarkMode
+              ? themeChanger.setLightMode(context)
+              : themeChanger.setLightMode(context);
           return themeChanger;
         },
         child: MaterialAppWithTheme());
