@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:telluslite/common/theme/theme_changer.dart';
 import 'package:telluslite/persistent/repositories/secure_store_repository.dart';
 import 'package:telluslite/push_notification/push_notification_manager.dart';
 
+import 'common/copy_manager/app_localization_delegate.dart';
 import 'common/theme/Themes.dart';
 import 'navigation/Routes.dart';
 
@@ -70,7 +72,36 @@ class _MaterialAppWithThemeState extends State<MaterialAppWithTheme>
       darkTheme: Themes.darkTheme(context),
       initialRoute: Routes.splash,
       onGenerateRoute: Routes.generateRoute,
+      supportedLocales: getSupportedLocale(),
+      localizationsDelegates: getLocalizationsDelegate(),
     );
+  }
+
+  // add here new supported locale
+  List<Locale> getSupportedLocale() {
+    List<Locale> supportedLocales = List();
+    supportedLocales.add(Locale('en', 'EN'));
+    supportedLocales.add(Locale('it', 'IT'));
+
+    return supportedLocales;
+  }
+
+  List<LocalizationsDelegate> getLocalizationsDelegate() {
+    List<LocalizationsDelegate> localizationDelegates = List();
+    localizationDelegates.add(AppLocalizationsDelegate());
+    localizationDelegates.add(GlobalMaterialLocalizations.delegate);
+    localizationDelegates.add(GlobalCupertinoLocalizations.delegate);
+    return localizationDelegates;
+  }
+
+  ///
+  Locale searchLocaleFromLanguage(Locale locale, List<Locale> lista) {
+    for (Locale l in lista) {
+      if (l.languageCode == locale.languageCode) {
+        return l;
+      }
+    }
+    return null;
   }
 
   @override

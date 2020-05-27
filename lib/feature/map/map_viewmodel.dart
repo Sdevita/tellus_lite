@@ -40,12 +40,16 @@ class MapViewModel extends BaseViewModel {
     await showNotificationDetails();
     await _getEarthquakes(context);
     pageController.addListener(() {
-      int currentIndex = pageController.page.toInt();
-      var latitude = _earthquakeList[currentIndex]?.geometry?.coordinates[1];
-      var longitude = _earthquakeList[currentIndex]?.geometry?.coordinates[0];
-      _showDetail(latitude, longitude, false);
+      _onPageScroll();
     });
     _showMapLoader(false);
+  }
+
+  _onPageScroll() {
+    int currentIndex = pageController.page.toInt();
+    var latitude = _earthquakeList[currentIndex]?.geometry?.coordinates[1];
+    var longitude = _earthquakeList[currentIndex]?.geometry?.coordinates[0];
+    _showDetail(latitude, longitude, false);
   }
 
   onGetMyLocation() async {
@@ -74,6 +78,7 @@ class MapViewModel extends BaseViewModel {
       await _showDetail(lat, lon, true);
     } else {
       // from on message
+      _mapState = MapState.Notification;
       var lat = double.parse(notificationModel['latitude']);
       var lon = double.parse(notificationModel['longitude']);
       await _showDetail(lat, lon, true);
@@ -82,7 +87,7 @@ class MapViewModel extends BaseViewModel {
 
   _showDetail(double lat, double lon, bool isFromNotification) async {
     var camera;
-    if (_mapState == MapState.Details) {
+    if (_mapState == MapState.Details || _mapState == MapState.Notification) {
       detailsCardHeight = mediaQuery.size.height / 3;
       headerWidth = mediaQuery.size.width - 50;
       camera = CameraPosition(target: LatLng(lat, lon), zoom: 14);
