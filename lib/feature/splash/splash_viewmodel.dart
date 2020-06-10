@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:telluslite/common/base_viewmodel.dart';
 import 'package:telluslite/navigation/Routes.dart';
 import 'package:telluslite/network/repositories/firebase_auth_repository.dart';
-import 'package:telluslite/persistent/repositories/secure_store_repository.dart';
 import 'package:telluslite/push_notification/push_notification_manager.dart';
 
 class SplashViewModel extends BaseViewModel {
@@ -12,10 +11,8 @@ class SplashViewModel extends BaseViewModel {
     await PushNotificationsManager().enable();
     PushNotificationsManager().init();
     var authRepo = FireBaseAuthRepository();
-
     _isUserLogged = await authRepo.isUserLogged();
-    bool isDarkMode = await SecureStoreRepository().hasDarkModeSaved();
-
+    notifyListeners();
     navigate(context);
   }
 

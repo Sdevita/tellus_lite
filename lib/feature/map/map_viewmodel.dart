@@ -20,6 +20,7 @@ class MapViewModel extends BaseViewModel {
   Geolocator _geolocator;
   Position _currentPosition;
   bool _isDarkMode = false;
+  bool _isMarkerTapped = false;
   Set<Marker> _markers;
   bool showMapLoader = true;
   MapState _mapState = MapState.Map;
@@ -32,24 +33,26 @@ class MapViewModel extends BaseViewModel {
   MapViewModel({this.notificationModel});
 
   init(BuildContext context, bool isDarkMode) async {
-    mediaQuery = MediaQuery.of(context);
-    _showMapLoader(true);
-    _geolocator = Geolocator();
     _isDarkMode = isDarkMode;
+    mediaQuery = MediaQuery.of(context);
+    _geolocator = Geolocator();
+    showLoader();
     await onGetMyLocation();
     await showNotificationDetails();
     await _getEarthquakes(context);
     pageController.addListener(() {
       _onPageScroll();
     });
-    _showMapLoader(false);
+    hideLoader();
   }
 
   _onPageScroll() {
-    int currentIndex = pageController.page.toInt();
-    var latitude = _earthquakeList[currentIndex]?.geometry?.coordinates[1];
-    var longitude = _earthquakeList[currentIndex]?.geometry?.coordinates[0];
-    _showDetail(latitude, longitude, false);
+    if (!_isMarkerTapped) {
+      int currentIndex = pageController.page.toInt();
+      var latitude = _earthquakeList[currentIndex]?.geometry?.coordinates[1];
+      var longitude = _earthquakeList[currentIndex]?.geometry?.coordinates[0];
+      _showDetail(latitude, longitude, false);
+    }
   }
 
   onGetMyLocation() async {
@@ -127,9 +130,18 @@ class MapViewModel extends BaseViewModel {
     var latitude = feature?.geometry?.coordinates[1];
     var longitude = feature?.geometry?.coordinates[0];
     return Marker(
-      markerId: MarkerId(feature.properties.eventId.toString() ?? 0),
-      position: LatLng(latitude, longitude),
-    );
+        markerId: MarkerId(feature.properties.eventId.toString() ?? 0),
+        position: LatLng(latitude, longitude),
+        onTap: () async {
+          _isMarkerTapped = true;
+          _selectedEvent = feature;
+          if (_mapState == MapState.Details) {
+            _showDetail(latitude, longitude, false);
+          }
+          await pageController.animateToPage(_earthquakeList.indexOf(feature),
+              duration: Duration(milliseconds: 500), curve: Curves.decelerate);
+          _isMarkerTapped = false;
+        });
   }
 
   _setMapStyle() async {
@@ -153,11 +165,8 @@ class MapViewModel extends BaseViewModel {
   onTopTapped(int index) {
     if (_mapState != MapState.Details) {
       _mapState = MapState.Details;
-      var event = _earthquakeList[index];
-      _selectedEvent = event;
-      var latitude = event?.geometry?.coordinates[1];
-      var longitude = event?.geometry?.coordinates[0];
-      _showDetail(latitude, longitude, false);
+      _selectedEvent = _earthquakeList[index];
+      _updateUI();
     }
   }
 
@@ -174,9 +183,14 @@ class MapViewModel extends BaseViewModel {
         headerWidth = mediaQuery.size.width / 2;
         break;
       case MapState.Details:
-
+        var latitude = _selectedEvent?.geometry?.coordinates[1];
+        var longitude = _selectedEvent?.geometry?.coordinates[0];
+        _showDetail(latitude, longitude, false);
+        break;
       case MapState.Notification:
-        // TODO: Handle this case.
+        var latitude = _selectedEvent?.geometry?.coordinates[1];
+        var longitude = _selectedEvent?.geometry?.coordinates[0];
+        _showDetail(latitude, longitude, false);
         break;
     }
     notifyListeners();

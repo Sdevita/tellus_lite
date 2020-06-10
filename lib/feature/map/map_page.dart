@@ -1,3 +1,6 @@
+import 'dart:ui' as ui;
+
+import 'package:awesome_loader/awesome_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -14,8 +17,8 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
   MapViewModel viewModel;
-  ThemeChanger themeChanger;
   ThemeData theme;
+  ThemeChanger _themeChanger;
   double bottomPadding;
   Alignment bottomAlignment;
   Alignment topAlignment;
@@ -25,17 +28,17 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
 
   @override
   void initState() {
-    super.initState();
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      viewModel.init(context, themeChanger.isDarkModeTheme);
+      viewModel.init(context, _themeChanger.isDarkModeTheme ?? false);
     });
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     viewModel = Provider.of<MapViewModel>(context);
-    themeChanger = Provider.of(context);
+    _themeChanger = Provider.of<ThemeChanger>(context);
     theme = Theme.of(context);
     mq = MediaQuery.of(context);
     double mqPTop = MediaQuery.of(context).padding.top;
@@ -52,7 +55,25 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
           _buildHeader(context),
           _buildBottomWidget(context),
           _buildDetails(context),
+          viewModel.loader ? _buildLoader() : IgnorePointer()
         ],
+      ),
+    );
+  }
+
+  _buildLoader() {
+    return Container(
+      child: BackdropFilter(
+        filter: ui.ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
+        child: Container(
+          decoration: BoxDecoration(color: Colors.white12),
+          child: Center(
+            child: AwesomeLoader(
+              loaderType: AwesomeLoader.AwesomeLoader3,
+              color: Theme.of(context).primaryColor,
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -62,7 +83,7 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
       alignment: topAlignment,
       child: AnimatedContainer(
         duration: Duration(milliseconds: 200),
-        curve: Curves.easeInCirc,
+        curve: Curves.fastLinearToSlowEaseIn,
         width: headerWidth,
         onEnd: () {
           //viewModel.changeHeaderTitle();
@@ -85,21 +106,13 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
                   color: Theme.of(context).primaryColor,
                 ),
               ),
-              !viewModel.showMapLoader
-                  ? Flexible(
-                      child: Text(
-                        viewModel.headerTitle,
-                        textAlign: TextAlign.center,
-                        style:
-                            TextStyle(fontSize: 20, color: theme.primaryColor),
-                      ),
-                    )
-                  : Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: CircularProgressIndicator(
-                        backgroundColor: theme.primaryColor,
-                      ),
-                    ),
+              Flexible(
+                child: Text(
+                  viewModel.headerTitle,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 20, color: theme.primaryColor),
+                ),
+              ),
               IconButton(
                 onPressed: () {
                   viewModel.goToFilters(context);
@@ -137,8 +150,9 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
 
   _buildBottomWidget(BuildContext context) {
     return Align(
-      alignment: Alignment(0.0, 0.9),
+      alignment: Alignment.bottomCenter,
       child: Container(
+        margin: EdgeInsets.symmetric(vertical: 20),
         height: mq.size.height / 5.5,
         child: PageView.builder(
           itemCount: viewModel.earthquakeList.length,
@@ -165,39 +179,75 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
       alignment: Alignment.bottomCenter,
       child: AnimatedContainer(
         duration: Duration(milliseconds: 200),
-        curve: Curves.easeInCirc,
+        curve: Curves.fastLinearToSlowEaseIn,
         height: detailBoxHeight,
         decoration: BoxDecoration(
           color: theme.backgroundColor,
-          borderRadius: BorderRadius.circular(25.0),
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20), topRight: Radius.circular(20)),
         ),
-        child: Stack(
-          children: <Widget>[
-            Positioned(
-              left: 16,
-              top: 16,
-              child: Container(
-                constraints: BoxConstraints(maxWidth: mq.size.width * 0.8),
-                child: Text(
-                  event?.properties?.place ?? "",
-                  style: TextStyle(fontSize: 18, color: theme.primaryColor),
+        child: GestureDetector(
+          onVerticalDragDown: (details) {
+            viewModel.onCloseDetail();
+          },
+          child: Stack(
+            children: <Widget>[
+              Positioned(
+                left: 16,
+                top: 16,
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      constraints:
+                          BoxConstraints(maxWidth: mq.size.width * 0.8),
+                      child: Text(
+                        event?.properties?.place ?? "",
+                        style:
+                            TextStyle(fontSize: 18, color: theme.primaryColor),
+                      ),
+                    ),
+                    Container(
+                      constraints:
+                          BoxConstraints(maxWidth: mq.size.width * 0.7),
+                      padding: EdgeInsets.only(top: 10),
+                      child: Text(
+                        event?.properties?.time ?? "",
+                        overflow: TextOverflow.fade,
+                        style:
+                            TextStyle(fontSize: 15, color: theme.primaryColor),
+                      ),
+                    ),
+                    Container(
+                      constraints:
+                          BoxConstraints(maxWidth: mq.size.width * 0.8),
+                      padding: EdgeInsets.only(top: 10),
+                      child: Text(
+                        event?.geometry?.coordinates
+                                ?.elementAt(2)
+                                ?.toString() ??
+                            "",
+                        style:
+                            TextStyle(fontSize: 15, color: theme.primaryColor),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
-            Positioned(
-              right: 5,
-              top: 5,
-              child: IconButton(
-                onPressed: () {
-                  viewModel.onCloseDetail();
-                },
-                icon: Icon(
-                  Icons.clear,
-                  color: theme.primaryColor,
+              Positioned(
+                right: 5,
+                top: 5,
+                child: IconButton(
+                  onPressed: () {
+                    viewModel.onCloseDetail();
+                  },
+                  icon: Icon(
+                    Icons.clear,
+                    color: theme.primaryColor,
+                  ),
                 ),
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );

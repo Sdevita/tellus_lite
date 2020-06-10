@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../limited_text_box.dart';
+
 class EarthQuakeListCard extends StatelessWidget {
   final String title;
   final double magnitude;
@@ -33,8 +35,8 @@ class EarthQuakeListCard extends StatelessWidget {
       height: height,
       child: Stack(
         children: <Widget>[
-          _buildBottomCard(context, height, theme),
-          _buildTopCard(context, height, theme),
+          //_buildBottomCard(context, height, theme),
+          _buildTopCard(context, height, theme, mediaQuery),
           _buildMagnitude(context, theme),
         ],
       ),
@@ -53,14 +55,15 @@ class EarthQuakeListCard extends StatelessWidget {
         child: Center(
           child: Text(
             magnitude.toString(),
-            style: TextStyle(fontSize: 18, color: theme.accentColor),
+            style: TextStyle(fontSize: 15, color: theme.accentColor),
           ),
         ),
       ),
     );
   }
 
-  _buildTopCard(BuildContext context, double height, ThemeData theme) {
+  _buildTopCard(BuildContext context, double height, ThemeData theme,
+      MediaQueryData mediaQuery) {
     return Positioned(
       top: 20,
       left: 0,
@@ -69,14 +72,14 @@ class EarthQuakeListCard extends StatelessWidget {
         onTap: onTopTapped,
         child: Container(
             height: height / 2,
-            decoration: new BoxDecoration(
+            decoration: BoxDecoration(
                 color: topCardColor ?? theme.backgroundColor,
-                borderRadius: new BorderRadius.circular(15)),
-            child: new Center(
-              child: new Text(
-                title,
-                style: TextStyle(fontSize: 15, color: theme.primaryColor),
-              ),
+                borderRadius: BorderRadius.circular(15)),
+            child: LimitedTextBox(
+              text: title,
+              maxLines: 1,
+              fontSize: 15,
+              maxWidth: mediaQuery.size.width * 0.5,
             )),
       ),
     );
@@ -87,13 +90,13 @@ class EarthQuakeListCard extends StatelessWidget {
       alignment: Alignment.bottomCenter,
       child: Container(
           height: height / 2,
-          decoration: new BoxDecoration(
+          decoration: BoxDecoration(
               color: topCardColor ?? Colors.white30,
-              borderRadius: new BorderRadius.only(
+              borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(15),
                   bottomRight: Radius.circular(15))),
-          child: new Center(
-            child: new Text(title),
+          child: Center(
+            child: Text(title),
           )),
     );
   }

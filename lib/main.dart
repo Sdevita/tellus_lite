@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:telluslite/common/theme/theme_changer.dart';
-import 'package:telluslite/persistent/repositories/secure_store_repository.dart';
 import 'package:telluslite/push_notification/push_notification_manager.dart';
 
 import 'common/copy_manager/app_localization_delegate.dart';
@@ -23,25 +22,12 @@ class _MyAppState extends State<MyApp> {
   bool isDarkMode = false;
 
   @override
-  void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      var dark = await SecureStoreRepository().hasDarkModeSaved();
-      setState(() {
-        isDarkMode = dark;
-      });
-    });
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     //SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top]);
     return ChangeNotifierProvider<ThemeChanger>(
         create: (_) {
           ThemeChanger themeChanger = ThemeChanger();
-          isDarkMode
-              ? themeChanger.setLightMode(context)
-              : themeChanger.setLightMode(context);
+          themeChanger.setLightMode(context);
           return themeChanger;
         },
         child: MaterialAppWithTheme());
