@@ -149,27 +149,29 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
   }
 
   _buildBottomWidget(BuildContext context) {
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: Container(
-        margin: EdgeInsets.symmetric(vertical: 20),
-        height: mq.size.height / 5.5,
-        child: PageView.builder(
-          itemCount: viewModel.earthquakeList.length,
-          // store this controller in a State to save the carousel scroll position
-          controller: viewModel.pageController,
-          itemBuilder: (BuildContext context, int itemIndex) {
-            var event = viewModel.earthquakeList[itemIndex];
-            return EarthQuakeListCard(
-              title: event.properties.place,
-              magnitude: event.properties.mag,
-              onTopTapped: () {
-                viewModel.onTopTapped(itemIndex);
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: <Widget>[
+        Container(
+            margin: EdgeInsets.symmetric(vertical: 20),
+            height: mq.size.height / 5.5,
+            child: PageView.builder(
+              itemCount: viewModel.earthquakeList.length,
+              // store this controller in a State to save the carousel scroll position
+              controller: viewModel.pageController,
+              itemBuilder: (BuildContext context, int itemIndex) {
+                var event = viewModel.earthquakeList[itemIndex];
+                return EarthQuakeListCard(
+                  title: event.properties.place,
+                  magnitude: event.properties.mag,
+                  onTopTapped: () {
+                    viewModel.onTopTapped(itemIndex);
+                  },
+                );
               },
-            );
-          },
-        ),
-      ),
+            ),
+          ),
+      ],
     );
   }
 
