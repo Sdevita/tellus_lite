@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:telluslite/common/theme/theme_changer.dart';
+import 'package:telluslite/common/widgets/Ec_text.dart';
 import 'package:telluslite/feature/splash/splash_viewmodel.dart';
 import 'package:telluslite/persistent/repositories/secure_store_repository.dart';
 import 'package:telluslite/push_notification/push_notification_manager.dart';
@@ -57,9 +58,12 @@ class _SplashPageState extends State<SplashPage> with WidgetsBindingObserver {
     return Scaffold(
       backgroundColor: Colors.teal,
       body: Center(
-        child: Text(
+        child: ECText(
           "Tellus",
-          style: TextStyle(fontSize: 50, color: Colors.white),
+          fontSize: 50,
+          fontWeight: FontWeight.w400,
+          autoResize: true,
+          color: Colors.white,
         ),
       ),
     );

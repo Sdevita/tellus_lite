@@ -4,6 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:telluslite/common/base_viewmodel.dart';
 import 'package:telluslite/common/constants/app_constants.dart';
+import 'package:telluslite/common/helpers/map_screen_helper.dart';
 import 'package:telluslite/common/widgets/Dialogs.dart';
 import 'package:telluslite/navigation/Routes.dart';
 import 'package:telluslite/network/model/response/feature.dart';
@@ -117,21 +118,23 @@ class MapViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  _setMarkers() {
+  _setMarkers() async{
     if (_earthquakeList == null) {
       return;
     }
+    var icon = await MapScreenHelper.getMarker();
     _markers = Set();
-    _earthquakeList.forEach((feature) => _markers.add(_createMarker(feature)));
+    _earthquakeList.forEach((feature) => _markers.add( _createMarker(feature, icon)));
     notifyListeners();
   }
 
-  _createMarker(Feature feature) {
+  _createMarker(Feature feature, icon){
     var latitude = feature?.geometry?.coordinates[1];
     var longitude = feature?.geometry?.coordinates[0];
     return Marker(
         markerId: MarkerId(feature.properties.eventId.toString() ?? 0),
         position: LatLng(latitude, longitude),
+        icon: icon,
         onTap: () async {
           _isMarkerTapped = true;
           _selectedEvent = feature;

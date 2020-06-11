@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:telluslite/common/widgets/Ec_text.dart';
 
 import '../../limited_text_box.dart';
 
@@ -53,9 +54,12 @@ class EarthQuakeListCard extends StatelessWidget {
         height: 50,
         width: 50,
         child: Center(
-          child: Text(
+          child: ECText(
             magnitude.toString(),
-            style: TextStyle(fontSize: 15, color: theme.accentColor),
+            fontSize: 15,
+            autoResize: true,
+            overflow: TextOverflow.fade,
+            color: theme.accentColor,
           ),
         ),
       ),
@@ -65,22 +69,31 @@ class EarthQuakeListCard extends StatelessWidget {
   _buildTopCard(BuildContext context, double height, ThemeData theme,
       MediaQueryData mediaQuery) {
     return Positioned(
-      top: 20,
+      top: 25,
       left: 0,
       right: 0,
       child: InkWell(
         onTap: onTopTapped,
         child: Container(
-            height: height / 2,
-            decoration: BoxDecoration(
-                color: topCardColor ?? theme.backgroundColor,
-                borderRadius: BorderRadius.circular(15)),
-            child: LimitedTextBox(
-              text: title,
-              maxLines: 1,
-              fontSize: 15,
-              maxWidth: mediaQuery.size.width * 0.5,
-            )),
+          height: height / 2,
+          decoration: BoxDecoration(
+              color: topCardColor ?? theme.backgroundColor,
+              borderRadius: BorderRadius.circular(15)),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 16, right: 16, top: 20, bottom: 16),
+            child: Column(
+              children: <Widget>[
+                ECText(
+                  title,
+                  fontSize: 15,
+                  autoResize: true,
+                  overflow: TextOverflow.fade,
+                  color: theme.primaryColor,
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

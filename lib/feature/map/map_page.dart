@@ -110,7 +110,7 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
                 child: Text(
                   viewModel.headerTitle,
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 20, color: theme.primaryColor),
+                  style: TextStyle(fontSize: 20, color: theme.primaryColor, fontFamily: 'Euclid', fontWeight: FontWeight.bold),
                 ),
               ),
               IconButton(
