@@ -7,6 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:telluslite/common/theme/theme_changer.dart';
 import 'package:telluslite/common/widgets/map/card/earthquake_list_card.dart';
+import 'package:telluslite/feature/drawer_menu/drawer_widget.dart';
 
 import 'map_viewmodel.dart';
 
@@ -49,14 +50,19 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
     headerWidth = viewModel.headerWidth ?? mq.size.width / 2;
 
     return Scaffold(
-      body: Stack(
-        children: <Widget>[
-          _buildMap(context),
-          _buildHeader(context),
-          _buildBottomWidget(context),
-          _buildDetails(context),
-          viewModel.loader ? _buildLoader() : IgnorePointer()
-        ],
+      body: DrawerMenu(
+        onDrawerClosed: (navigation) {
+          viewModel.onDrawerClosed(navigation);
+        },
+        child: Stack(
+          children: <Widget>[
+            _buildMap(context),
+            _buildHeader(context),
+            _buildBottomWidget(context),
+            _buildDetails(context),
+            viewModel.loader ? _buildLoader() : IgnorePointer()
+          ],
+        ),
       ),
     );
   }
@@ -98,7 +104,8 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
             children: <Widget>[
               IconButton(
                 onPressed: () {
-                  viewModel.goToSettings(context);
+                  //viewModel.goToSettings(context);
+                  viewModel.openDrawer(context);
                 },
                 splashColor: Colors.transparent,
                 icon: Icon(
@@ -131,7 +138,7 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
   }
 
   _buildMap(BuildContext context) {
-    return GoogleMap(
+    return viewModel.isDrawerOpened ? Container(color: theme.backgroundColor,) : GoogleMap(
       /* padding: EdgeInsets.only(
           bottom: (MediaQuery.of(context).size.height * 0.11) -
               MediaQuery.of(context).padding.bottom),*/
@@ -181,7 +188,7 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
       alignment: Alignment.bottomCenter,
       child: AnimatedContainer(
         duration: Duration(milliseconds: 200),
-        curve: Curves.fastLinearToSlowEaseIn,
+        curve: Curves.bounceInOut,
         height: detailBoxHeight,
         decoration: BoxDecoration(
           color: theme.backgroundColor,

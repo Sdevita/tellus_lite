@@ -19,6 +19,7 @@ class MapViewModel extends BaseViewModel {
   PageController pageController = PageController(viewportFraction: 0.8);
   GoogleMapController _mapController;
   Geolocator _geolocator;
+  bool _isDrawerOpened = false;
   Position _currentPosition;
   bool _isDarkMode = false;
   bool _isMarkerTapped = false;
@@ -111,6 +112,19 @@ class MapViewModel extends BaseViewModel {
     _mapController = controller;
     _setMapStyle();
     _setMarkers();
+  }
+
+  openDrawer(BuildContext context){
+    onMenuClicked(context);
+    _isDrawerOpened = true;
+    notifyListeners();
+  }
+
+  void onDrawerClosed(bool withNavigation) {
+    if (!withNavigation) {
+      _isDrawerOpened = false;
+      notifyListeners();
+    }
   }
 
   _showMapLoader(bool loader) {
@@ -264,4 +278,6 @@ class MapViewModel extends BaseViewModel {
   MapState get state => _mapState;
 
   Feature get selectedEvent => _selectedEvent;
+
+  bool get isDrawerOpened => _isDrawerOpened;
 }

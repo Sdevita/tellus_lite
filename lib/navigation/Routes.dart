@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:telluslite/feature/drawer_menu/drawer_viewmodel.dart';
 import 'package:telluslite/feature/login/login_page.dart';
 import 'package:telluslite/feature/login/login_viewmodel.dart';
 import 'package:telluslite/feature/map/map_page.dart';
@@ -24,10 +25,13 @@ class Routes {
         final Map<String, dynamic> notification = settings.arguments;
         return MaterialPageRoute(
           builder: (_) => ChangeNotifierProvider(
-            create: (_) => notification != null
-                ? MapViewModel(notificationModel: notification)
-                : MapViewModel(),
-            child: MapPage(),
+            create: (_) => DrawerViewModel(),
+            child: ChangeNotifierProvider(
+              create: (_) => notification != null
+                  ? MapViewModel(notificationModel: notification)
+                  : MapViewModel(),
+              child: MapPage(),
+            ),
           ),
         );
       case settingsRoute:
@@ -64,5 +68,16 @@ class Routes {
             builder: (_) => ChangeNotifierProvider<SplashViewModel>(
                 create: (_) => SplashViewModel(), child: SplashPage()));
     }
+  }
+
+  static bool isCurrent(String routeName, BuildContext context) {
+    bool isCurrent = false;
+    Navigator.popUntil(context, (route) {
+      if (route.settings.name == routeName) {
+        isCurrent = true;
+      }
+      return false;
+    });
+    return isCurrent;
   }
 }
