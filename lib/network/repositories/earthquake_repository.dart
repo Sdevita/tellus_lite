@@ -6,7 +6,10 @@ class EarthquakeRepository {
   IngvApiProvider _apiProvider = IngvApiProvider();
 
   Future<IngvResponse> getEarthQuakes(double longitude, double latitude,
-      {double minDepth = 0, double minMag = 2, int numberOfDay = 2}) {
+      {double minDepth = 0,
+      double minMag = 2,
+      int numberOfDay = 7,
+      int maxRadiusKm = 20000}) {
     return _apiProvider.getEarthquakes(longitude, latitude,
         minDepth: minDepth, minMag: minMag, numberOfDay: numberOfDay);
   }

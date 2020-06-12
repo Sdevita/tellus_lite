@@ -6,6 +6,7 @@ class AppNavigationBar extends StatelessWidget {
   final Widget centerWidget;
   final VoidCallback onRightWidgetTapped;
   final Widget rightWidget;
+
   AppNavigationBar(
       {this.onLeftWidgetTapped,
       this.leftWidget,
@@ -21,7 +22,9 @@ class AppNavigationBar extends StatelessWidget {
         leftWidget != null
             ? Flexible(
                 child: InkWell(
-                  child: leftWidget,
+                  splashColor: Colors.transparent,
+                  child:
+                      Padding(padding: EdgeInsets.all(20), child: leftWidget),
                   onTap: onLeftWidgetTapped ?? () {},
                 ),
               )
@@ -32,7 +35,9 @@ class AppNavigationBar extends StatelessWidget {
         rightWidget != null
             ? Flexible(
                 child: InkWell(
-                  child: rightWidget,
+                  splashColor: Colors.transparent,
+                  child:
+                      Padding(padding: EdgeInsets.all(20), child: rightWidget),
                   onTap: onRightWidgetTapped ?? () {},
                 ),
               )

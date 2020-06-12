@@ -13,6 +13,8 @@ class TellusSlider extends StatefulWidget {
   final MaterialColor firstGradientColor;
   final MaterialColor secondGradientColor;
   final ValueChanged<double> onChanged;
+  final Color backgroundColor;
+  final Color controlsColor;
 
   TellusSlider(
       {this.sliderHeight = 48,
@@ -22,7 +24,9 @@ class TellusSlider extends StatefulWidget {
       this.fullWidth = false,
       @required this.onChanged,
       this.firstGradientColor,
-      this.secondGradientColor});
+      this.secondGradientColor,
+      this.backgroundColor = Colors.white,
+      this.controlsColor});
 
   @override
   _TellusSliderState createState() => _TellusSliderState();
@@ -49,18 +53,10 @@ class _TellusSliderState extends State<TellusSlider> {
           : (this.widget.sliderHeight) * 5.5,
       height: (this.widget.sliderHeight),
       decoration: new BoxDecoration(
+        color: widget.backgroundColor,
         borderRadius: new BorderRadius.all(
           Radius.circular((this.widget.sliderHeight * .3)),
         ),
-        gradient: new LinearGradient(
-            colors: [
-              Colors.tealAccent,
-              Colors.teal,
-            ],
-            begin: const FractionalOffset(0.0, 0.0),
-            end: const FractionalOffset(1.0, 1.00),
-            stops: [0.0, 1.0],
-            tileMode: TileMode.clamp),
       ),
       child: Padding(
         padding: EdgeInsets.fromLTRB(this.widget.sliderHeight * paddingFactor,
@@ -73,7 +69,7 @@ class _TellusSliderState extends State<TellusSlider> {
               style: TextStyle(
                 fontSize: this.widget.sliderHeight * .3,
                 fontWeight: FontWeight.w700,
-                color: Colors.white,
+                color: Colors.blueAccent,
               ),
             ),
             SizedBox(
@@ -83,18 +79,18 @@ class _TellusSliderState extends State<TellusSlider> {
               child: Center(
                 child: SliderTheme(
                   data: SliderTheme.of(context).copyWith(
-                    activeTrackColor: Colors.white.withOpacity(1),
-                    inactiveTrackColor: Colors.white.withOpacity(.5),
+                    activeTrackColor: Colors.green.withOpacity(1),
+                    inactiveTrackColor: Colors.green.withOpacity(.5),
 
                     trackHeight: 4.0,
                     thumbShape: CustomThumbSliderCircle(
-                      thumbRadius: this.widget.sliderHeight * .4,
-                      min: this.widget.min,
-                      max: this.widget.max,
-                    ),
-                    overlayColor: Colors.white.withOpacity(.4),
+                        thumbRadius: this.widget.sliderHeight * .4,
+                        min: this.widget.min,
+                        max: this.widget.max,
+                        thumbColor: Colors.white10),
+                    overlayColor: Colors.green.withOpacity(.4),
                     //valueIndicatorColor: Colors.white,
-                    activeTickMarkColor: Colors.white,
+                    activeTickMarkColor: Colors.green,
                     inactiveTickMarkColor: Colors.red.withOpacity(.7),
                   ),
                   child: Slider(
@@ -117,7 +113,7 @@ class _TellusSliderState extends State<TellusSlider> {
               style: TextStyle(
                 fontSize: this.widget.sliderHeight * .3,
                 fontWeight: FontWeight.w700,
-                color: Colors.white,
+                color: Colors.blueAccent,
               ),
             ),
           ],

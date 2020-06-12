@@ -118,17 +118,18 @@ class MapViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  _setMarkers() async{
+  _setMarkers() async {
     if (_earthquakeList == null) {
       return;
     }
     var icon = await MapScreenHelper.getMarker();
     _markers = Set();
-    _earthquakeList.forEach((feature) => _markers.add( _createMarker(feature, icon)));
+    _earthquakeList
+        .forEach((feature) => _markers.add(_createMarker(feature, icon)));
     notifyListeners();
   }
 
-  _createMarker(Feature feature, icon){
+  _createMarker(Feature feature, icon) {
     var latitude = feature?.geometry?.coordinates[1];
     var longitude = feature?.geometry?.coordinates[0];
     return Marker(
@@ -199,12 +200,18 @@ class MapViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  _getEarthquakes(BuildContext context) async {
+  _getEarthquakes(BuildContext context,
+      {double minDepth = 0,
+      double minMag = 2,
+      int numberOfDay = 7,
+      int maxRadiusKm = 100}) async {
     EarthquakeRepository repository = EarthquakeRepository();
     IngvResponse response = await repository.getEarthQuakes(
-      _currentPosition.longitude,
-      _currentPosition.latitude,
-    );
+        _currentPosition.longitude, _currentPosition.latitude,
+        minDepth: minDepth,
+        minMag: minMag,
+        numberOfDay: numberOfDay,
+        maxRadiusKm: maxRadiusKm);
 
     if (response != null) {
       _handleResponse(response, context);

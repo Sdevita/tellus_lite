@@ -9,7 +9,10 @@ class IngvApiProvider {
   final Dio _dio = Dio();
 
   Future<IngvResponse> getEarthquakes(double longitude, double latitude,
-      {double minDepth = 0, double minMag = 2, int numberOfDay = 2}) async {
+      {double minDepth = 0,
+      double minMag = 2,
+      int numberOfDay = 2,
+      int maxRadiusKm = 20000}) async {
     try {
       _addInterceptors();
       var yesterday = DateTime.now().subtract(Duration(days: numberOfDay));
@@ -20,7 +23,7 @@ class IngvApiProvider {
         "minmag": minMag,
         "lat": latitude,
         "lon": longitude,
-        "maxradiuskm": 20000,
+        "maxradiuskm": maxRadiusKm,
         "format": "geojson"
       });
       return IngvResponse.fromJson(response.data);
