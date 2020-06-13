@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:telluslite/common/base_widget.dart';
 import 'package:telluslite/common/theme/theme_changer.dart';
 import 'package:telluslite/common/widgets/appbar/app_bar.dart';
+import 'package:telluslite/feature/drawer_menu/drawer_widget.dart';
 import 'package:telluslite/feature/settings_page/settings_viewmodel.dart';
 
 class Settings extends StatefulWidget {
@@ -33,20 +34,26 @@ class _SettingsState extends State<Settings> with WidgetsBindingObserver {
 
     return BaseWidget(
       loader: viewModel.loader,
-      appBar: TellusAppBar(
-        leftIcon: Icons.arrow_back_ios,
-        onLeftButtonTapped: () {
-          viewModel.onBack(context);
-        },
-      ),
-      body: Center(
+      backgroundColor: theme.backgroundColor,
+      body: DrawerMenu(
+        child: SafeArea(
+          top: true,
           child: Column(
-        children: <Widget>[
-          _buildLogoutButton(context),
-          _buildNotificationButton(context),
-          _buildDarkModeToggle()
-        ],
-      )),
+            children: <Widget>[
+              TellusAppBar(
+                leftIcon: Icons.menu,
+                leftIconColor: theme.primaryColor,
+                onLeftButtonTapped: () {
+                  viewModel.onMenuClicked(context);
+                },
+              ),
+              _buildLogoutButton(context),
+              _buildNotificationButton(context),
+              _buildDarkModeToggle()
+            ],
+          ),
+        ),
+      ),
     );
   }
 

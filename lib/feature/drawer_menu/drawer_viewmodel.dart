@@ -11,10 +11,7 @@ class DrawerViewModel extends BaseViewModel {
 
   DrawerViewModel();
 
-
-  init(BuildContext context) async{
-
-  }
+  init(BuildContext context) async {}
 
   showDrawer() {
     isDrawerClosed = false;
@@ -27,21 +24,18 @@ class DrawerViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  navigateToSection(BuildContext context, String routeName){
+  navigateToSection(BuildContext context, String routeName) {
     dismissDrawer(withNavigation: routeName != "/home");
-    if (!Routes.isCurrent(routeName, context)) {
-      Future.delayed(Duration(milliseconds: 300), () {
-        Navigator.of(context).pushNamed(routeName);
-      });
-    }
+    Navigator.of(context).pushNamedAndRemoveUntil(
+        routeName,
+        (route) =>
+            route.isCurrent && route.settings.name == routeName ? false : true);
   }
 
-  goToMap(BuildContext context){
+  goToMap(BuildContext context) {
     Navigator.pushNamed(context, Routes.home);
     dismissDrawer(withNavigation: true);
   }
 
-
-  logOut(BuildContext context) async {
-  }
+  logOut(BuildContext context) async {}
 }

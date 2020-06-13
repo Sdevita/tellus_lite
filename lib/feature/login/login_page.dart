@@ -28,8 +28,6 @@ class _LoginPageState extends State<LoginPage>
     viewModel = Provider.of(context);
     var mq = MediaQuery.of(context);
     return BaseWidget(
-      safeAreaTop: false,
-      safeAreaBottom: false,
       loader: viewModel.loader,
       body: SingleChildScrollView(
         child: Column(children: <Widget>[

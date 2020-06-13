@@ -36,12 +36,21 @@ class Routes {
         );
       case settingsRoute:
         return MaterialPageRoute<bool>(
-            builder: (_) => ChangeNotifierProvider<SettingsViewModel>(
-                create: (_) => SettingsViewModel(), child: Settings()));
+          builder: (_) => ChangeNotifierProvider(
+            create: (_) => DrawerViewModel(),
+            child: ChangeNotifierProvider<SettingsViewModel>(
+              create: (_) => SettingsViewModel(),
+              child: Settings(),
+            ),
+          ),
+        );
       case login:
         return MaterialPageRoute(
-            builder: (_) => ChangeNotifierProvider<LoginViewModel>(
-                create: (_) => LoginViewModel(), child: LoginPage()));
+          builder: (_) => ChangeNotifierProvider<LoginViewModel>(
+            create: (_) => LoginViewModel(),
+            child: LoginPage(),
+          ),
+        );
       case mapFilters:
         return PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) =>
@@ -68,16 +77,5 @@ class Routes {
             builder: (_) => ChangeNotifierProvider<SplashViewModel>(
                 create: (_) => SplashViewModel(), child: SplashPage()));
     }
-  }
-
-  static bool isCurrent(String routeName, BuildContext context) {
-    bool isCurrent = false;
-    Navigator.popUntil(context, (route) {
-      if (route.settings.name == routeName) {
-        isCurrent = true;
-      }
-      return false;
-    });
-    return isCurrent;
   }
 }

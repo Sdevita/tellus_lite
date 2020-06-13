@@ -50,6 +50,7 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
     headerWidth = viewModel.headerWidth ?? mq.size.width / 2;
 
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
       body: DrawerMenu(
         onDrawerClosed: (navigation) {
           viewModel.onDrawerClosed(navigation);
@@ -57,6 +58,11 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
         child: Stack(
           children: <Widget>[
             _buildMap(context),
+            viewModel.isDrawerOpened
+                ? Container(
+                    color: theme.backgroundColor.withOpacity(.6),
+                  )
+                : IgnorePointer(),
             _buildHeader(context),
             _buildBottomWidget(context),
             _buildDetails(context),
@@ -117,7 +123,11 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
                 child: Text(
                   viewModel.headerTitle,
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 20, color: theme.primaryColor, fontFamily: 'Euclid', fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      fontSize: 20,
+                      color: theme.primaryColor,
+                      fontFamily: 'Euclid',
+                      fontWeight: FontWeight.bold),
                 ),
               ),
               IconButton(
@@ -138,7 +148,7 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
   }
 
   _buildMap(BuildContext context) {
-    return viewModel.isDrawerOpened ? Container(color: theme.backgroundColor,) : GoogleMap(
+    return GoogleMap(
       /* padding: EdgeInsets.only(
           bottom: (MediaQuery.of(context).size.height * 0.11) -
               MediaQuery.of(context).padding.bottom),*/
@@ -160,24 +170,24 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
         Container(
-            margin: EdgeInsets.symmetric(vertical: 20),
-            height: mq.size.height / 5.5,
-            child: PageView.builder(
-              itemCount: viewModel.earthquakeList.length,
-              // store this controller in a State to save the carousel scroll position
-              controller: viewModel.pageController,
-              itemBuilder: (BuildContext context, int itemIndex) {
-                var event = viewModel.earthquakeList[itemIndex];
-                return EarthQuakeListCard(
-                  title: event.properties.place,
-                  magnitude: event.properties.mag,
-                  onTopTapped: () {
-                    viewModel.onTopTapped(itemIndex);
-                  },
-                );
-              },
-            ),
+          margin: EdgeInsets.symmetric(vertical: 20),
+          height: mq.size.height / 5.5,
+          child: PageView.builder(
+            itemCount: viewModel.earthquakeList.length,
+            // store this controller in a State to save the carousel scroll position
+            controller: viewModel.pageController,
+            itemBuilder: (BuildContext context, int itemIndex) {
+              var event = viewModel.earthquakeList[itemIndex];
+              return EarthQuakeListCard(
+                title: event.properties.place,
+                magnitude: event.properties.mag,
+                onTopTapped: () {
+                  viewModel.onTopTapped(itemIndex);
+                },
+              );
+            },
           ),
+        ),
       ],
     );
   }

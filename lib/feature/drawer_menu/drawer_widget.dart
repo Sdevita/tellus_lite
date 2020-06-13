@@ -86,9 +86,7 @@ class _DrawerMenuState extends State<DrawerMenu>
   /// Build menu elements using [MenuItem] widget
   List<Widget> getMenuItems(context) {
     List<Widget> menuItems = List();
-    menuItems = [
-      _buildMapMenu(context),
-    ];
+    menuItems = [_buildMapMenu(context), _buildSettingsMenu(context)];
     return menuItems;
   }
 
@@ -103,6 +101,22 @@ class _DrawerMenuState extends State<DrawerMenu>
       text: "Home",
       onPressed: () {
         viewModel.navigateToSection(context, Routes.home);
+      },
+    );
+  }
+
+  MenuItem _buildSettingsMenu(context) {
+    return MenuItem(
+      icon: Padding(
+          padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+          child: Icon(
+            Icons.settings,
+            color: Colors.white,
+          )),
+      textColor: Colors.white,
+      text: "Settings",
+      onPressed: () {
+        viewModel.navigateToSection(context, Routes.settingsRoute);
       },
     );
   }
@@ -135,6 +149,11 @@ class _DrawerMenuState extends State<DrawerMenu>
                         Radius.circular(viewModel.isDrawerClosed ? 0 : 50)),
                   ),
                 )),
+                onHorizontalDragEnd: !viewModel.isDrawerClosed
+                    ? (details) {
+                        viewModel.dismissDrawer();
+                      }
+                    : (details) {},
                 onTap: !viewModel.isDrawerClosed
                     ? () {
                         viewModel.dismissDrawer();
