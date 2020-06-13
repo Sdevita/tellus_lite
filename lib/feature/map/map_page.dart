@@ -6,7 +6,9 @@ import 'package:flutter/widgets.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:telluslite/common/theme/theme_changer.dart';
+import 'package:telluslite/common/utils/resources_utils.dart';
 import 'package:telluslite/common/widgets/map/card/earthquake_list_card.dart';
+import 'package:telluslite/feature/drawer_menu/drawer_viewmodel.dart';
 import 'package:telluslite/feature/drawer_menu/drawer_widget.dart';
 
 import 'map_viewmodel.dart';
@@ -18,6 +20,7 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
   MapViewModel viewModel;
+  DrawerViewModel drawerViewModel;
   ThemeData theme;
   ThemeChanger _themeChanger;
   double bottomPadding;
@@ -38,6 +41,7 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    drawerViewModel = Provider.of<DrawerViewModel>(context, listen: false);
     viewModel = Provider.of<MapViewModel>(context);
     _themeChanger = Provider.of<ThemeChanger>(context);
     theme = Theme.of(context);
@@ -50,19 +54,28 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
     headerWidth = viewModel.headerWidth ?? mq.size.width / 2;
 
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
       body: DrawerMenu(
         onDrawerClosed: (navigation) {
           viewModel.onDrawerClosed(navigation);
         },
         child: Stack(
           children: <Widget>[
-            _buildMap(context),
             viewModel.isDrawerOpened
-                ? Container(
-                    color: theme.backgroundColor.withOpacity(.6),
-                  )
-                : IgnorePointer(),
+                ? AnimatedOpacity(
+                  opacity: viewModel.isDrawerOpened ? 1 : 0,
+                  curve: Curves.fastLinearToSlowEaseIn,
+                  duration: Duration(seconds: 2),
+                  child: Container(
+                    color: theme.backgroundColor,
+                    child: Center(
+                      child: AwesomeLoader(
+                        loaderType: AwesomeLoader.AwesomeLoader3,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                    ),
+                  ),
+                )
+                : _buildMap(context),
             _buildHeader(context),
             _buildBottomWidget(context),
             _buildDetails(context),
@@ -108,15 +121,14 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              IconButton(
-                onPressed: () {
-                  //viewModel.goToSettings(context);
+              InkWell(
+                onTap: () {
                   viewModel.openDrawer(context);
                 },
                 splashColor: Colors.transparent,
-                icon: Icon(
-                  Icons.settings,
-                  color: Theme.of(context).primaryColor,
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: ResourcesUtils.getSvg('menu', color: theme.primaryColor),
                 ),
               ),
               Flexible(
@@ -136,7 +148,7 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
                 },
                 splashColor: Colors.transparent,
                 icon: Icon(
-                  Icons.filter_list,
+                  Icons.low_priority,
                   color: theme.primaryColor,
                 ),
               ),
@@ -157,7 +169,7 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
       myLocationEnabled: true,
       myLocationButtonEnabled: false,
       zoomControlsEnabled: false,
-      mapToolbarEnabled: true,
+      mapToolbarEnabled: false,
       markers: viewModel.markers,
       onMapCreated: (GoogleMapController controller) {
         viewModel.onMapCreated(controller);

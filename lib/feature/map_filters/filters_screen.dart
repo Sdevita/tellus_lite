@@ -21,28 +21,6 @@ class _FiltersScreenState extends State<FiltersScreen> {
     viewModel = Provider.of(context);
 
     return BaseWidget(
-        appBar: AppNavigationBar(
-          leftWidget: ECText("Cancel",
-              color: Colors.red, fontSize: 16, fontWeight: FontWeight.bold),
-          onLeftWidgetTapped: () {
-            viewModel.onCancelTapped(context);
-          },
-          centerWidget: ECText(
-            "Filters",
-            align: TextAlign.center,
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-          ),
-          rightWidget: ECText(
-            "apply",
-            color: theme.primaryColor,
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-          onRightWidgetTapped: () {
-            viewModel.onCancelTapped(context);
-          },
-        ),
         body: _buildBody(context));
   }
 
@@ -53,6 +31,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            _buildAppBar(context),
             Row(
               children: <Widget>[
                 ECText(
@@ -90,6 +69,31 @@ class _FiltersScreenState extends State<FiltersScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  _buildAppBar(BuildContext context){
+    return AppNavigationBar(
+      leftWidget: ECText("Cancel",
+          color: Colors.red, fontSize: 16, fontWeight: FontWeight.bold),
+      onLeftWidgetTapped: () {
+        viewModel.onCancelTapped(context);
+      },
+      centerWidget: ECText(
+        "Filters",
+        align: TextAlign.center,
+        fontSize: 22,
+        fontWeight: FontWeight.bold,
+      ),
+      rightWidget: ECText(
+        "apply",
+        color: theme.primaryColor,
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+      ),
+      onRightWidgetTapped: () {
+        viewModel.onCancelTapped(context);
+      },
     );
   }
 }

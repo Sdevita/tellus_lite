@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:telluslite/common/base_widget.dart';
 import 'package:telluslite/common/theme/theme_changer.dart';
+import 'package:telluslite/common/utils/resources_utils.dart';
 import 'package:telluslite/common/widgets/appbar/app_bar.dart';
 import 'package:telluslite/feature/drawer_menu/drawer_widget.dart';
 import 'package:telluslite/feature/settings_page/settings_viewmodel.dart';
@@ -33,26 +34,23 @@ class _SettingsState extends State<Settings> with WidgetsBindingObserver {
     theme = Theme.of(context);
 
     return BaseWidget(
+      hasDrawer: true,
       loader: viewModel.loader,
-      backgroundColor: theme.backgroundColor,
-      body: DrawerMenu(
-        child: SafeArea(
-          top: true,
-          child: Column(
-            children: <Widget>[
-              TellusAppBar(
-                leftIcon: Icons.menu,
-                leftIconColor: theme.primaryColor,
-                onLeftButtonTapped: () {
-                  viewModel.onMenuClicked(context);
-                },
-              ),
-              _buildLogoutButton(context),
-              _buildNotificationButton(context),
-              _buildDarkModeToggle()
-            ],
+      body: Column(
+        children: <Widget>[
+          TellusAppBar(
+            leftIcon: Padding(
+                padding: EdgeInsets.all(10),
+                child:
+                    ResourcesUtils.getSvg('menu', color: theme.primaryColor)),
+            onLeftButtonTapped: () {
+              viewModel.onMenuClicked(context);
+            },
           ),
-        ),
+          _buildLogoutButton(context),
+          _buildNotificationButton(context),
+          _buildDarkModeToggle()
+        ],
       ),
     );
   }

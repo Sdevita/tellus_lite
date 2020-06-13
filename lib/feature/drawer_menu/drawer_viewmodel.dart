@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sailor/sailor.dart';
 import 'package:telluslite/common/base_viewmodel.dart';
 import 'package:telluslite/navigation/Routes.dart';
 
@@ -25,16 +26,28 @@ class DrawerViewModel extends BaseViewModel {
   }
 
   navigateToSection(BuildContext context, String routeName) {
-    dismissDrawer(withNavigation: routeName != "/home");
-    Navigator.of(context).pushNamedAndRemoveUntil(
-        routeName,
-        (route) =>
-            route.isCurrent && route.settings.name == routeName ? false : true);
+    dismissDrawer(withNavigation: routeName != Routes.map);
+    if (!Routes.isCurrent(routeName)) {
+      Future.delayed(Duration(milliseconds: 300), () {
+        Routes.sailor.navigate(
+          routeName,
+          transitions: [SailorTransition.fade_in],
+          transitionCurve: Curves.bounceInOut,
+          transitionDuration: Duration(milliseconds: 400),
+          navigationType: NavigationType.pushAndRemoveUntil,
+          removeUntilPredicate: (_) => false,
+        );
+      });
+    }
   }
 
   goToMap(BuildContext context) {
-    Navigator.pushNamed(context, Routes.home);
-    dismissDrawer(withNavigation: true);
+    if (!Routes.isCurrent(Routes.map)) {
+      Routes.sailor.navigate(Routes.map, params: {"notification": null});
+      dismissDrawer(withNavigation: true);
+    }else{
+      dismissDrawer(withNavigation: false);
+    }
   }
 
   logOut(BuildContext context) async {}

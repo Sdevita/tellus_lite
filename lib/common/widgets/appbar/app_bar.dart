@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 
 class TellusAppBar extends StatelessWidget {
   final VoidCallback onLeftButtonTapped;
-  final IconData leftIcon;
-  final Color leftIconColor;
+  final Widget leftIcon;
 
   TellusAppBar(
       {this.onLeftButtonTapped,
-      this.leftIcon,
-      this.leftIconColor = Colors.white});
+      this.leftIcon});
 
   @override
   Widget build(BuildContext context) {
@@ -16,12 +14,9 @@ class TellusAppBar extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
         leftIcon != null
-            ? IconButton(
-                icon: Icon(
-                  leftIcon,
-                  color: leftIconColor,
-                ),
-                onPressed: onLeftButtonTapped ?? () {},
+            ? InkWell(
+                child: leftIcon,
+                onTap: onLeftButtonTapped ?? () {},
               )
             : IgnorePointer()
       ],

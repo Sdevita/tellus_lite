@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sailor/sailor.dart';
 import 'package:telluslite/feature/drawer_menu/drawer_viewmodel.dart';
 import 'package:telluslite/feature/login/login_page.dart';
 import 'package:telluslite/feature/login/login_viewmodel.dart';
@@ -13,69 +14,95 @@ import 'package:telluslite/feature/splash/splash_page.dart';
 import 'package:telluslite/feature/splash/splash_viewmodel.dart';
 
 class Routes {
+  static final sailor = Sailor(
+      options: SailorOptions(
+          defaultTransitions: [SailorTransition.slide_from_right]));
+
   static const String settingsRoute = "/settings";
-  static const String home = "/home";
+  static const String map = "/map";
   static const String login = "/login";
   static const String mapFilters = "/mapFilters";
   static const String splash = "/";
 
-  static Route<dynamic> generateRoute(RouteSettings settings) {
-    switch (settings.name) {
-      case home:
-        final Map<String, dynamic> notification = settings.arguments;
-        return MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider(
-            create: (_) => DrawerViewModel(),
-            child: ChangeNotifierProvider(
-              create: (_) => notification != null
-                  ? MapViewModel(notificationModel: notification)
-                  : MapViewModel(),
-              child: MapPage(),
-            ),
+  static bool isCurrent(String routeName) {
+    bool isCurrent = false;
+    sailor.navigatorKey.currentState.popUntil((route) {
+      print(route.settings.name);
+      print(routeName);
+      if (route.settings.name == routeName) {
+        isCurrent = true;
+        print("isTrue");
+      }
+      return true;
+    });
+    print("isCurrent: $isCurrent");
+    return isCurrent;
+  }
+
+  static void createRoutes() {
+    // MAP ROUTE
+    sailor.addRoute(SailorRoute(
+      name: map,
+      builder: (context, args, params) {
+        final Map<String, dynamic> notification = params.param("notification");
+        return ChangeNotifierProvider(
+          create: (_) => DrawerViewModel(),
+          child: ChangeNotifierProvider(
+            create: (_) => notification != null
+                ? MapViewModel(notificationModel: notification)
+                : MapViewModel(),
+            child: MapPage(),
           ),
         );
-      case settingsRoute:
-        return MaterialPageRoute<bool>(
-          builder: (_) => ChangeNotifierProvider(
+      },
+      params: [
+        SailorParam<Map<String, dynamic>>(
+            name: "notification", isRequired: false)
+      ],
+    ));
+
+    // SETTINGS ROUTE
+    sailor.addRoute(SailorRoute(
+        name: settingsRoute,
+        builder: (context, args, params) {
+          return ChangeNotifierProvider(
             create: (_) => DrawerViewModel(),
             child: ChangeNotifierProvider<SettingsViewModel>(
               create: (_) => SettingsViewModel(),
               child: Settings(),
             ),
-          ),
-        );
-      case login:
-        return MaterialPageRoute(
-          builder: (_) => ChangeNotifierProvider<LoginViewModel>(
+          );
+        }));
+
+    // SPLASH ROUTE
+    sailor.addRoute(SailorRoute(
+        name: splash,
+        builder: (context, args, params) {
+          return ChangeNotifierProvider<SplashViewModel>(
+              create: (_) => SplashViewModel(), child: SplashPage());
+        }));
+
+    // LOGIN ROUTE
+    sailor.addRoute(SailorRoute(
+        name: login,
+        builder: (context, args, params) {
+          return ChangeNotifierProvider<LoginViewModel>(
             create: (_) => LoginViewModel(),
             child: LoginPage(),
-          ),
-        );
-      case mapFilters:
-        return PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) =>
-              ChangeNotifierProvider<FiltersViewModel>(
+          );
+        }));
+
+    // MAP FILTERS ROUTE
+    sailor.addRoute(SailorRoute(
+        name: mapFilters,
+        builder: (context, args, params) {
+          return ChangeNotifierProvider<FiltersViewModel>(
             create: (_) => FiltersViewModel(),
             child: FiltersScreen(),
-          ),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            var begin = Offset(0.0, 1.0);
-            var end = Offset.zero;
-            var curve = Curves.ease;
-
-            var tween =
-                Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-            return SlideTransition(
-              position: animation.drive(tween),
-              child: child,
-            );
-          },
-        );
-      case splash:
-        return MaterialPageRoute(
-            builder: (_) => ChangeNotifierProvider<SplashViewModel>(
-                create: (_) => SplashViewModel(), child: SplashPage()));
-    }
+          );
+        },
+        defaultTransitions: [SailorTransition.slide_from_bottom],
+        defaultTransitionCurve: Curves.fastLinearToSlowEaseIn));
   }
+
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:telluslite/common/theme/theme_changer.dart';
@@ -6,9 +7,12 @@ import 'package:telluslite/push_notification/push_notification_manager.dart';
 
 import 'common/copy_manager/app_localization_delegate.dart';
 import 'common/theme/Themes.dart';
+import 'feature/splash/splash_page.dart';
+import 'feature/splash/splash_viewmodel.dart';
 import 'navigation/Routes.dart';
 
 void main() async {
+  Routes.createRoutes();
   runApp(MyApp());
 }
 
@@ -23,7 +27,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    //SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top]);
     return ChangeNotifierProvider<ThemeChanger>(
         create: (_) {
           ThemeChanger themeChanger = ThemeChanger();
@@ -56,10 +59,12 @@ class _MaterialAppWithThemeState extends State<MaterialAppWithTheme>
       debugShowCheckedModeBanner: false,
       theme: theme.themeData,
       darkTheme: Themes.darkTheme(context),
-      initialRoute: Routes.splash,
-      onGenerateRoute: Routes.generateRoute,
+      navigatorKey: Routes.sailor.navigatorKey,
+      onGenerateRoute: Routes.sailor.generator(),
       supportedLocales: getSupportedLocale(),
       localizationsDelegates: getLocalizationsDelegate(),
+      home : ChangeNotifierProvider<SplashViewModel>(
+          create: (_) => SplashViewModel(), child: SplashPage())
     );
   }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:sailor/sailor.dart';
 import 'package:telluslite/common/base_viewmodel.dart';
 import 'package:telluslite/navigation/Routes.dart';
 import 'package:telluslite/network/repositories/firebase_auth_repository.dart';
@@ -25,23 +26,19 @@ class SplashViewModel extends BaseViewModel {
   }
 
   _goToHome(BuildContext context) {
-    Navigator.of(context)
-        .pushNamedAndRemoveUntil(Routes.home, (Route<dynamic> route) => false);
+    Routes.sailor.navigate(Routes.map, navigationType: NavigationType.pushReplace, params: {"notification": null});
   }
 
   pushNavigation(BuildContext context, Map<String, dynamic> notificationModel) {
     print(notificationModel);
     if (_isUserLogged) {
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          Routes.home, (route) => false,
-          arguments: notificationModel);
+      Routes.sailor.navigate(Routes.map, navigationType: NavigationType.pushReplace, params: {"notification": notificationModel});
     } else {
       _goToLogin(context);
     }
   }
 
   _goToLogin(BuildContext context) {
-    Navigator.of(context)
-        .pushNamedAndRemoveUntil(Routes.login, (Route<dynamic> route) => false);
+    Routes.sailor.navigate(Routes.login, navigationType: NavigationType.pushReplace);
   }
 }

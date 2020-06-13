@@ -94,13 +94,13 @@ class _DrawerMenuState extends State<DrawerMenu>
     return MenuItem(
       icon: Padding(
         padding: const EdgeInsets.only(left: 10.0, right: 10.0),
-        child: ResourcesUtils.getSvg("marker",
+        child: ResourcesUtils.getSvg("map",
             width: 24, height: 24, color: Colors.white), //SVG has no padding
       ),
       textColor: Colors.white,
-      text: "Home",
+      text: "Map",
       onPressed: () {
-        viewModel.navigateToSection(context, Routes.home);
+        viewModel.goToMap(context);
       },
     );
   }
@@ -139,26 +139,19 @@ class _DrawerMenuState extends State<DrawerMenu>
         },
         child: ScaleTransition(
             scale: _scaleAnimation,
-            child: GestureDetector(
-                child: InkWell(
-                    child: IgnorePointer(
-                  ignoring: !viewModel.isDrawerClosed,
-                  child: ClipRRect(
-                    child: widget.child,
-                    borderRadius: BorderRadius.all(
-                        Radius.circular(viewModel.isDrawerClosed ? 0 : 50)),
-                  ),
-                )),
-                onHorizontalDragEnd: !viewModel.isDrawerClosed
-                    ? (details) {
-                        viewModel.dismissDrawer();
-                      }
-                    : (details) {},
+            child: InkWell(
                 onTap: !viewModel.isDrawerClosed
                     ? () {
                         viewModel.dismissDrawer();
                       }
-                    : () {} //DO NOTHING
-                )));
+                    : () {},
+                child: IgnorePointer(
+                  ignoring: !viewModel.isDrawerClosed,
+                  child: ClipRRect(
+                    child: Container(color: theme.backgroundColor ,child: widget.child),
+                    borderRadius: BorderRadius.all(
+                        Radius.circular(viewModel.isDrawerClosed ? 0 : 50)),
+                  ),
+                ))));
   }
 }

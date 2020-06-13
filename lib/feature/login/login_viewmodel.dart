@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:sailor/sailor.dart';
 import 'package:telluslite/common/base_viewmodel.dart';
 import 'package:telluslite/common/validators/fields_validator.dart';
 import 'package:telluslite/common/widgets/Dialogs.dart';
@@ -74,8 +75,9 @@ class LoginViewModel extends BaseViewModel {
   }
 
   goToHome(BuildContext context) {
-    Navigator.of(context)
-        .pushNamedAndRemoveUntil(Routes.home, (Route<dynamic> route) => false);
+    Routes.sailor.navigate(Routes.map,
+        navigationType: NavigationType.pushReplace,
+        params: {"notification": null});
   }
 
   validateEmail(String email) {
