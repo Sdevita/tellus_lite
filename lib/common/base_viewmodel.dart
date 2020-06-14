@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'dart:io' show Platform;
-
 import 'package:telluslite/feature/drawer_menu/drawer_viewmodel.dart';
 
 class BaseViewModel extends ChangeNotifier {
@@ -23,12 +21,12 @@ class BaseViewModel extends ChangeNotifier {
   void onMenuClicked(BuildContext context) {
     try {
       DrawerViewModel drawerViewModel =
-      Provider.of<DrawerViewModel>(context, listen: false);
+          Provider.of<DrawerViewModel>(context, listen: false);
       drawerViewModel.isDrawerClosed
           ? drawerViewModel.showDrawer()
           : drawerViewModel.dismissDrawer();
     } catch (e) {
-     //todo check this error
+      //todo check this error
       //DO NOTHING
     }
   }

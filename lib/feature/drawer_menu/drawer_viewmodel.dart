@@ -46,9 +46,13 @@ class DrawerViewModel extends BaseViewModel {
     if (!Routes.isCurrent(Routes.map)) {
       dismissDrawer();
       Future.delayed(Duration(milliseconds: 250), () {
-        Routes.sailor.navigate(Routes.map,
-            params: {"notification": null},
-            transitions: [SailorTransition.fade_in]);
+        Routes.sailor.navigate(
+          Routes.map,
+          params: {"notification": null},
+          transitions: [SailorTransition.fade_in],
+          navigationType: NavigationType.pushAndRemoveUntil,
+          removeUntilPredicate: (_) => false,
+        );
       });
     } else {
       dismissDrawer();

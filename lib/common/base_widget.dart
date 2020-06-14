@@ -9,6 +9,7 @@ class BaseWidget extends StatefulWidget {
   final Widget appBar;
   final bool loader;
   final bool hasDrawer;
+  final bool blurredLoader;
   final bool showSafeAreaTop;
   final bool showSafeAreaBottom;
 
@@ -18,6 +19,7 @@ class BaseWidget extends StatefulWidget {
       this.loader = false,
       this.showSafeAreaTop = true,
       this.showSafeAreaBottom = false,
+      this.blurredLoader = false,
       this.hasDrawer = false});
 
   @override
@@ -49,12 +51,16 @@ class _BaseWidgetState extends State<BaseWidget> {
                     child: widget.body),
               ],
             )),
-        widget.loader ? _buildLoader() : IgnorePointer(),
+        widget.loader ? _showLoader() : IgnorePointer(),
       ],
     );
   }
 
-  _buildLoader() {
+  _showLoader() {
+    return widget.blurredLoader ? _buildBlurredLoader() : _buildLoader();
+  }
+
+  _buildBlurredLoader() {
     return Container(
       child: BackdropFilter(
         filter: ui.ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
@@ -67,6 +73,15 @@ class _BaseWidgetState extends State<BaseWidget> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  _buildLoader() {
+    return Center(
+      child: AwesomeLoader(
+        loaderType: AwesomeLoader.AwesomeLoader3,
+        color: Theme.of(context).primaryColor,
       ),
     );
   }

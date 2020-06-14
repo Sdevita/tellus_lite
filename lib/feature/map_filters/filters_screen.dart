@@ -16,11 +16,19 @@ class _FiltersScreenState extends State<FiltersScreen> {
   ThemeData theme;
 
   @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      viewModel.init();
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     theme = Theme.of(context);
     viewModel = Provider.of(context);
 
-    return BaseWidget(body: _buildBody(context));
+    return BaseWidget(loader: viewModel.loader, body: _buildBody(context));
   }
 
   _buildBody(BuildContext context) {
@@ -58,7 +66,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
                     color: theme.primaryColor,
                   ),
                   ECText(
-                    viewModel.distance.toString() + " Km",
+                    viewModel.distance.toDouble().toString() + " Km",
                     fontSize: 14,
                     align: TextAlign.start,
                     fontWeight: FontWeight.w200,
@@ -94,7 +102,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
         fontWeight: FontWeight.bold,
       ),
       onRightWidgetTapped: () {
-        viewModel.onCancelTapped(context);
+        viewModel.onApplyTapped();
       },
     );
   }
@@ -105,7 +113,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
       maxValue: 1000,
       minValue: 100,
       onChange: (value) {
-        viewModel.onDistanceChanged(value);
+        viewModel.onDistanceChanged(value.toInt());
       },
     );
   }

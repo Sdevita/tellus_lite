@@ -10,6 +10,8 @@ import 'package:telluslite/navigation/Routes.dart';
 import 'package:telluslite/network/model/response/feature.dart';
 import 'package:telluslite/network/model/response/ingv_response.dart';
 import 'package:telluslite/network/repositories/earthquake_repository.dart';
+import 'package:telluslite/persistent/models/user_configuration.dart';
+import 'package:telluslite/persistent/repositories/secure_store_repository.dart';
 
 enum MapState { Map, Details, Notification }
 
@@ -32,6 +34,7 @@ class MapViewModel extends BaseViewModel {
   double detailsCardHeight;
   double headerWidth;
   String headerTitle = AppConstants.APP_NAME;
+  UserConfiguration _userConfiguration;
 
   MapViewModel({this.notificationModel});
 
@@ -69,6 +72,14 @@ class MapViewModel extends BaseViewModel {
           zoom: 7);
       _mapController?.moveCamera(CameraUpdate.newCameraPosition(camera));
     }
+  }
+
+  _getUserConfiguration() async {
+    showLoader();
+    SecureStoreRepository secureStoreRepository = SecureStoreRepository();
+    _userConfiguration =
+        await secureStoreRepository.loadCachedUserConfiguration();
+    hideLoader();
   }
 
   showNotificationDetails() async {

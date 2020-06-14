@@ -19,7 +19,9 @@ class SettingsViewModel extends BaseViewModel {
   logout(BuildContext context) {
     var firebaseRepo = FireBaseAuthRepository();
     firebaseRepo.logout().then((value) {
-      Routes.sailor.navigate(Routes.login, navigationType: NavigationType.pushReplace, removeUntilPredicate: (Route<dynamic> route) => false );
+      Routes.sailor.navigate(Routes.login,
+          navigationType: NavigationType.pushReplace,
+          removeUntilPredicate: (Route<dynamic> route) => false);
     });
   }
 

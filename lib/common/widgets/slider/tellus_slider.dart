@@ -4,10 +4,10 @@ import 'package:flutter_xlider/flutter_xlider.dart';
 import 'package:telluslite/common/widgets/Ec_text.dart';
 
 class TellusSlider extends StatelessWidget {
-  final double maxValue;
+  final int maxValue;
   final Function(double) onChange;
-  final double defaultValue;
-  final double minValue;
+  final int defaultValue;
+  final int minValue;
   final String unit;
 
   TellusSlider({
@@ -25,9 +25,9 @@ class TellusSlider extends StatelessWidget {
     return Column(
       children: <Widget>[
         FlutterSlider(
-          min: minValue,
-          max: maxValue,
-          values: [defaultValue],
+          min: minValue.toDouble(),
+          max: maxValue.toDouble(),
+          values: [defaultValue.toDouble()],
           step: FlutterSliderStep(step: 100),
           trackBar: FlutterSliderTrackBar(
             activeTrackBar: BoxDecoration(
