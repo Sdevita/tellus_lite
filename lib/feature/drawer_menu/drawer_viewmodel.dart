@@ -7,6 +7,7 @@ class DrawerViewModel extends BaseViewModel {
   bool isDrawerClosed = true;
   bool isNotificationVisible = true;
   bool _withNavigation = false;
+  double clipRadius = 0;
 
   bool get withNavigation => _withNavigation;
 
@@ -28,7 +29,7 @@ class DrawerViewModel extends BaseViewModel {
   navigateToSection(BuildContext context, String routeName) {
     dismissDrawer(withNavigation: routeName != Routes.map);
     if (!Routes.isCurrent(routeName)) {
-      Future.delayed(Duration(milliseconds: 300), () {
+      Future.delayed(Duration(milliseconds: 250), () {
         Routes.sailor.navigate(
           routeName,
           transitions: [SailorTransition.fade_in],
@@ -43,10 +44,14 @@ class DrawerViewModel extends BaseViewModel {
 
   goToMap(BuildContext context) {
     if (!Routes.isCurrent(Routes.map)) {
-      Routes.sailor.navigate(Routes.map, params: {"notification": null});
-      dismissDrawer(withNavigation: true);
-    }else{
-      dismissDrawer(withNavigation: false);
+      dismissDrawer();
+      Future.delayed(Duration(milliseconds: 250), () {
+        Routes.sailor.navigate(Routes.map,
+            params: {"notification": null},
+            transitions: [SailorTransition.fade_in]);
+      });
+    } else {
+      dismissDrawer();
     }
   }
 

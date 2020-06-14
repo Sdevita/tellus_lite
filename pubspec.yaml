@@ -36,8 +36,9 @@ dependencies:
   intl: ^0.16.1
   flutter_speed_dial: ^1.2.5
   awesome_loader: ^0.0.3
+  flutter_xlider: ^3.4.0
   #flutter_local_notifications: ^1.4.2
-  #cloud_firestore: ^0.13.5
+  #cloud_firestore: ^0.13.6
   flutter:
     sdk: flutter
   flutter_localizations:

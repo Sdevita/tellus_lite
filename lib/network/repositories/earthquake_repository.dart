@@ -9,8 +9,11 @@ class EarthquakeRepository {
       {double minDepth = 0,
       double minMag = 2,
       int numberOfDay = 7,
-      int maxRadiusKm = 20000}) {
+      int maxRadiusKm = 100}) {
     return _apiProvider.getEarthquakes(longitude, latitude,
-        minDepth: minDepth, minMag: minMag, numberOfDay: numberOfDay);
+        minDepth: minDepth,
+        minMag: minMag,
+        numberOfDay: numberOfDay,
+        maxRadiusKm: maxRadiusKm);
   }
 }

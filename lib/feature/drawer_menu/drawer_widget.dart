@@ -122,14 +122,23 @@ class _DrawerMenuState extends State<DrawerMenu>
   }
 
   Widget getAppScreen(context) {
+    if (!viewModel.isDrawerClosed) {
+      viewModel.clipRadius = 50;
+    }
     return AnimatedPositioned(
-        duration: Duration(milliseconds: 300),
+        duration: Duration(milliseconds: 500),
         top: viewModel.isDrawerClosed ? 0 : 0.10 * height,
         bottom: viewModel.isDrawerClosed ? 0 : 0.10 * height,
         left: viewModel.isDrawerClosed ? 0 : 0.70 * width,
         right: viewModel.isDrawerClosed ? 0 : -0.7 * width,
-        curve: Curves.elasticOut,
+        curve: Curves.easeInOutQuart,
         onEnd: () {
+          if (viewModel.isDrawerClosed) {
+            setState(() {
+              viewModel.clipRadius = 0;
+            });
+          }
+
           if (viewModel.isDrawerClosed && widget.onDrawerClosed != null) {
             widget.onDrawerClosed(viewModel.withNavigation);
           } else if (!viewModel.isDrawerClosed &&
@@ -148,9 +157,10 @@ class _DrawerMenuState extends State<DrawerMenu>
                 child: IgnorePointer(
                   ignoring: !viewModel.isDrawerClosed,
                   child: ClipRRect(
-                    child: Container(color: theme.backgroundColor ,child: widget.child),
-                    borderRadius: BorderRadius.all(
-                        Radius.circular(viewModel.isDrawerClosed ? 0 : 50)),
+                    child: Container(
+                        color: theme.backgroundColor, child: widget.child),
+                    borderRadius:
+                        BorderRadius.all(Radius.circular(viewModel.clipRadius)),
                   ),
                 ))));
   }

@@ -20,35 +20,23 @@ class _FiltersScreenState extends State<FiltersScreen> {
     theme = Theme.of(context);
     viewModel = Provider.of(context);
 
-    return BaseWidget(
-        body: _buildBody(context));
+    return BaseWidget(body: _buildBody(context));
   }
 
   _buildBody(BuildContext context) {
     return SingleChildScrollView(
       child: Container(
-        padding: EdgeInsets.all(30),
+        padding: EdgeInsets.symmetric(horizontal: 25),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             _buildAppBar(context),
-            Row(
-              children: <Widget>[
-                ECText(
-                  "Applied filters".toUpperCase(),
-                  fontSize: 14,
-                  align: TextAlign.start,
-                  fontWeight: FontWeight.w200,
-                  color: theme.primaryColor,
-                ),
-              ],
-            ),
             Padding(
-              padding: EdgeInsets.only(top: 20),
+              padding: const EdgeInsets.symmetric(vertical: 20),
               child: Row(
                 children: <Widget>[
                   ECText(
-                    "Distance".toUpperCase(),
+                    "Applied filters".toUpperCase(),
                     fontSize: 14,
                     align: TextAlign.start,
                     fontWeight: FontWeight.w200,
@@ -58,21 +46,35 @@ class _FiltersScreenState extends State<FiltersScreen> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 20),
-              child: TellusSlider(
-                backgroundColor: theme.buttonColor.withOpacity(.5),
-                min: 50,
-                max: 1000,
-                onChanged: (value) {},
+              padding: EdgeInsets.only(top: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  ECText(
+                    "Distance".toUpperCase(),
+                    fontSize: 14,
+                    align: TextAlign.start,
+                    fontWeight: FontWeight.w200,
+                    color: theme.primaryColor,
+                  ),
+                  ECText(
+                    viewModel.distance.toString() + " Km",
+                    fontSize: 14,
+                    align: TextAlign.start,
+                    fontWeight: FontWeight.w200,
+                    color: theme.primaryColor,
+                  ),
+                ],
               ),
             ),
+            _buildDistanceSlider(context)
           ],
         ),
       ),
     );
   }
 
-  _buildAppBar(BuildContext context){
+  _buildAppBar(BuildContext context) {
     return AppNavigationBar(
       leftWidget: ECText("Cancel",
           color: Colors.red, fontSize: 16, fontWeight: FontWeight.bold),
@@ -86,13 +88,24 @@ class _FiltersScreenState extends State<FiltersScreen> {
         fontWeight: FontWeight.bold,
       ),
       rightWidget: ECText(
-        "apply",
+        "Apply",
         color: theme.primaryColor,
         fontSize: 16,
         fontWeight: FontWeight.bold,
       ),
       onRightWidgetTapped: () {
         viewModel.onCancelTapped(context);
+      },
+    );
+  }
+
+  _buildDistanceSlider(BuildContext context) {
+    return TellusSlider(
+      defaultValue: viewModel.distance,
+      maxValue: 1000,
+      minValue: 100,
+      onChange: (value) {
+        viewModel.onDistanceChanged(value);
       },
     );
   }

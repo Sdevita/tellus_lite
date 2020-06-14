@@ -60,22 +60,29 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
         },
         child: Stack(
           children: <Widget>[
-            viewModel.isDrawerOpened
+            Visibility(
+              visible: !viewModel.isDrawerOpened,
+              child: _buildMap(context),
+            ),
+            !viewModel.isMapVisible
                 ? AnimatedOpacity(
-                  opacity: viewModel.isDrawerOpened ? 1 : 0,
-                  curve: Curves.fastLinearToSlowEaseIn,
-                  duration: Duration(seconds: 2),
-                  child: Container(
-                    color: theme.backgroundColor,
-                    child: Center(
-                      child: AwesomeLoader(
-                        loaderType: AwesomeLoader.AwesomeLoader3,
-                        color: Theme.of(context).primaryColor,
+                    opacity: viewModel.isDrawerOpened ? 1 : 0.99,
+                    curve: Curves.easeOut,
+                    duration: Duration(milliseconds: 700),
+                    onEnd: () {
+                      viewModel.showMap();
+                    },
+                    child: Container(
+                      color: theme.backgroundColor,
+                      child: Center(
+                        child: AwesomeLoader(
+                          loaderType: AwesomeLoader.AwesomeLoader3,
+                          color: Theme.of(context).primaryColor,
+                        ),
                       ),
                     ),
-                  ),
-                )
-                : _buildMap(context),
+                  )
+                : IgnorePointer(),
             _buildHeader(context),
             _buildBottomWidget(context),
             _buildDetails(context),
@@ -128,7 +135,8 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
                 splashColor: Colors.transparent,
                 child: Padding(
                   padding: const EdgeInsets.all(10.0),
-                  child: ResourcesUtils.getSvg('menu', color: theme.primaryColor),
+                  child:
+                      ResourcesUtils.getSvg('menu', color: theme.primaryColor),
                 ),
               ),
               Flexible(
