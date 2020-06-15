@@ -19,7 +19,7 @@ class FiltersViewModel extends BaseViewModel {
   }
 
   onCancelTapped(BuildContext context) {
-    Routes.sailor.pop();
+    Routes.sailor.pop(false);
   }
 
   onDistanceChanged(int distance) {
@@ -33,7 +33,7 @@ class FiltersViewModel extends BaseViewModel {
       FireStoreRepository fireStoreRepository = FireStoreRepository();
       await fireStoreRepository.saveUserConfiguration(_userConfiguration);
       hideLoader();
-      Routes.sailor.pop();
+      Routes.sailor.pop(true);
     }
   }
 

@@ -10,8 +10,8 @@ import 'package:telluslite/navigation/Routes.dart';
 import 'package:telluslite/network/model/response/feature.dart';
 import 'package:telluslite/network/model/response/ingv_response.dart';
 import 'package:telluslite/network/repositories/earthquake_repository.dart';
+import 'package:telluslite/network/repositories/firestore_repository.dart';
 import 'package:telluslite/persistent/models/user_configuration.dart';
-import 'package:telluslite/persistent/repositories/secure_store_repository.dart';
 
 enum MapState { Map, Details, Notification }
 
@@ -43,6 +43,7 @@ class MapViewModel extends BaseViewModel {
     mediaQuery = MediaQuery.of(context);
     _geolocator = Geolocator();
     showLoader();
+    await _getUserConfiguration();
     await onGetMyLocation();
     await showNotificationDetails();
     await _getEarthquakes(context);
@@ -75,11 +76,8 @@ class MapViewModel extends BaseViewModel {
   }
 
   _getUserConfiguration() async {
-    showLoader();
-    SecureStoreRepository secureStoreRepository = SecureStoreRepository();
-    _userConfiguration =
-        await secureStoreRepository.loadCachedUserConfiguration();
-    hideLoader();
+    FireStoreRepository fireStoreRepository = FireStoreRepository();
+    _userConfiguration = await fireStoreRepository.loadUserConfiguration();
   }
 
   showNotificationDetails() async {
@@ -227,21 +225,19 @@ class MapViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  _getEarthquakes(BuildContext context,
-      {double minDepth = 0,
-      double minMag = 2,
-      int numberOfDay = 7,
-      int maxRadiusKm = 100}) async {
-    EarthquakeRepository repository = EarthquakeRepository();
-    IngvResponse response = await repository.getEarthQuakes(
-        _currentPosition.longitude, _currentPosition.latitude,
-        minDepth: minDepth,
-        minMag: minMag,
-        numberOfDay: numberOfDay,
-        maxRadiusKm: maxRadiusKm);
+  _getEarthquakes(BuildContext context) async {
+    if (_userConfiguration != null) {
+      EarthquakeRepository repository = EarthquakeRepository();
+      IngvResponse response = await repository.getEarthQuakes(
+          _currentPosition.longitude, _currentPosition.latitude,
+          minDepth: _userConfiguration?.minDepth?.toDouble(),
+          minMag: _userConfiguration?.minMagnitude?.toDouble(),
+          numberOfDay: _userConfiguration?.maxEta,
+          maxRadiusKm: _userConfiguration?.maxRadiusKm);
 
-    if (response != null) {
-      _handleResponse(response, context);
+      if (response != null) {
+        _handleResponse(response, context);
+      }
     }
   }
 
@@ -270,16 +266,29 @@ class MapViewModel extends BaseViewModel {
     return LatLng(_currentPosition.latitude, _currentPosition.longitude);
   }
 
-  goToSettings(BuildContext context) async {
-    bool isDarkMode =
-        await Navigator.of(context).pushNamed(Routes.settingsRoute) ?? false;
-    setMapStyle(isDarkMode);
+  goToFilters(BuildContext context) async {
+    bool update = await Routes.sailor.navigate(Routes.mapFilters);
+    if (update) {
+      await _reloadMap(context);
+    }
   }
 
-  goToFilters(BuildContext context) async {
-    Navigator.of(context).pushNamed(
-      Routes.mapFilters,
-    );
+  _reloadMap(BuildContext context) async {
+    showLoader();
+    await _getUserConfiguration();
+    await _getEarthquakes(context);
+    hideLoader();
+    notifyListeners();
+    _resetZoom();
+  }
+
+  _resetZoom() {
+    if (_currentPosition != null && _mapController != null) {
+      var camera = CameraPosition(
+          target: LatLng(_currentPosition.latitude, _currentPosition.longitude),
+          zoom: 7);
+      _mapController.animateCamera(CameraUpdate.newCameraPosition(camera));
+    }
   }
 
   showMap() {
