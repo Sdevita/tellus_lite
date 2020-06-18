@@ -27,6 +27,11 @@ class FiltersViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+  onMagnitudeChanged(int magnitude){
+    _userConfiguration.minMagnitude = magnitude;
+    notifyListeners();
+  }
+
   onApplyTapped() async {
     if (_userConfiguration != null) {
       showLoader();
@@ -38,4 +43,6 @@ class FiltersViewModel extends BaseViewModel {
   }
 
   int get distance => _userConfiguration?.maxRadiusKm ?? 100;
+  int get minMagnitude => _userConfiguration?.minMagnitude ?? 2;
+
 }

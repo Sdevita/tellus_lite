@@ -28,7 +28,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
     theme = Theme.of(context);
     viewModel = Provider.of(context);
 
-    return BaseWidget(loader: viewModel.loader, body: _buildBody(context));
+    return BaseWidget(loader: viewModel.loader , blurredLoader: true , body: _buildBody(context));
   }
 
   _buildBody(BuildContext context) {
@@ -53,29 +53,8 @@ class _FiltersScreenState extends State<FiltersScreen> {
                 ],
               ),
             ),
-            Padding(
-              padding: EdgeInsets.only(top: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  ECText(
-                    "Distance".toUpperCase(),
-                    fontSize: 14,
-                    align: TextAlign.start,
-                    fontWeight: FontWeight.w200,
-                    color: theme.primaryColor,
-                  ),
-                  ECText(
-                    viewModel.distance.toDouble().toString() + " Km",
-                    fontSize: 14,
-                    align: TextAlign.start,
-                    fontWeight: FontWeight.w200,
-                    color: theme.primaryColor,
-                  ),
-                ],
-              ),
-            ),
-            _buildDistanceSlider(context)
+            _buildDistanceWidget(context),
+            _buildMagnitudeWidget(context),
           ],
         ),
       ),
@@ -84,8 +63,11 @@ class _FiltersScreenState extends State<FiltersScreen> {
 
   _buildAppBar(BuildContext context) {
     return AppNavigationBar(
-      leftWidget: ECText("Cancel",
-          color: Colors.red, fontSize: 16, fontWeight: FontWeight.bold),
+      leftWidget: Icon(
+        Icons.cancel,
+        color: Colors.redAccent,
+        size: 30,
+      ),
       onLeftWidgetTapped: () {
         viewModel.onCancelTapped(context);
       },
@@ -107,14 +89,90 @@ class _FiltersScreenState extends State<FiltersScreen> {
     );
   }
 
-  _buildDistanceSlider(BuildContext context) {
-    return TellusSlider(
-      defaultValue: viewModel.distance,
-      maxValue: 1000,
-      minValue: 100,
-      onChange: (value) {
-        viewModel.onDistanceChanged(value.toInt());
-      },
+  _buildDistanceWidget(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Padding(
+          padding: EdgeInsets.only(top: 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              ECText(
+                "Distance".toUpperCase(),
+                fontSize: 14,
+                align: TextAlign.start,
+                fontWeight: FontWeight.w200,
+                color: theme.primaryColor,
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 8),
+          child: ECText(
+            "Display all earthquakes within selected radius",
+            fontSize: 14,
+            align: TextAlign.start,
+            fontWeight: FontWeight.w200,
+            color: theme.primaryColor.withOpacity(.5),
+          ),
+        ),
+        TellusSlider(
+          defaultValue: viewModel.distance,
+          maxValue: 1000,
+          minValue: 100,
+          isInt: true,
+          onChange: (value) {
+            viewModel.onDistanceChanged(value.toInt());
+          },
+        ),
+      ],
+    );
+  }
+
+  _buildMagnitudeWidget(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Padding(
+          padding: EdgeInsets.only(top: 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              ECText(
+                "Magnitude".toUpperCase(),
+                fontSize: 14,
+                align: TextAlign.start,
+                fontWeight: FontWeight.w200,
+                color: theme.primaryColor,
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 8),
+          child: ECText(
+            "Displays all earthquakes above the selected minimum magnitude",
+            fontSize: 14,
+            align: TextAlign.start,
+            fontWeight: FontWeight.w200,
+            color: theme.primaryColor.withOpacity(.5),
+          ),
+        ),
+        TellusSlider(
+          defaultValue: viewModel.minMagnitude,
+          maxValue: 8,
+          minValue: 1,
+          isInt: true,
+          leftLabel: ">",
+          unit: "° Richter",
+          step: 1,
+          onChange: (value) {
+            viewModel.onMagnitudeChanged(value.toInt());
+          },
+        ),
+      ],
     );
   }
 }

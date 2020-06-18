@@ -21,8 +21,8 @@ class Dialogs {
               ));
   }
 
-  static showDefaultAlert(BuildContext context) {
-    showDCustomDialog(context, "Ops", "something went wrong", <Widget>[
+  static showDefaultAlert(BuildContext context, {String title, String message}) {
+    showDCustomDialog(context, title ?? "Ops", message ?? "something went wrong", <Widget>[
       FlatButton(
         child: Text(
           'Retry',
@@ -34,4 +34,5 @@ class Dialogs {
       )
     ]);
   }
+
 }

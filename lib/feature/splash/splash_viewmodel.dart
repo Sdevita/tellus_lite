@@ -41,4 +41,6 @@ class SplashViewModel extends BaseViewModel {
   _goToLogin(BuildContext context) {
     Routes.sailor.navigate(Routes.login, navigationType: NavigationType.pushReplace);
   }
+
+
 }

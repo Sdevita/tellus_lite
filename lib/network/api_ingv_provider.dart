@@ -15,8 +15,8 @@ class IngvApiProvider {
       int maxRadiusKm = 20000}) async {
     try {
       _addInterceptors();
-      var yesterday = DateTime.now().subtract(Duration(days: numberOfDay));
-      var starTime = yesterday.toIso8601String();
+      var days = DateTime.now().subtract(Duration(days: numberOfDay));
+      var starTime = days.toIso8601String();
       Response response = await _dio.get(_endpoint, queryParameters: {
         "starttime": starTime,
         "mindepth": minDepth,
@@ -26,7 +26,10 @@ class IngvApiProvider {
         "maxradiuskm": maxRadiusKm,
         "format": "geojson"
       });
-      return IngvResponse.fromJson(response.data);
+      if(response.statusCode > 200) {
+        return IngvResponse.withError(response.statusMessage, errorCode: response.statusCode);
+      }
+        return IngvResponse.fromJson(response.data);
     } catch (error, stacktrace) {
       print("Exception occured: $error stackTrace: $stacktrace");
       return IngvResponse.withError("$error");

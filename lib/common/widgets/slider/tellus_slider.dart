@@ -9,13 +9,19 @@ class TellusSlider extends StatelessWidget {
   final int defaultValue;
   final int minValue;
   final String unit;
+  final int step;
+  final bool isInt;
+  final String leftLabel;
 
   TellusSlider({
     this.maxValue,
     this.onChange,
     this.defaultValue,
     this.minValue,
-    this.unit = "Km",
+    this.unit = " Km",
+    this.leftLabel = "",
+    this.step,
+    this.isInt = false,
   });
 
   @override
@@ -27,8 +33,8 @@ class TellusSlider extends StatelessWidget {
         FlutterSlider(
           min: minValue.toDouble(),
           max: maxValue.toDouble(),
-          values: [defaultValue.toDouble()],
-          step: FlutterSliderStep(step: 100),
+          values: [defaultValue.truncateToDouble()],
+          step: FlutterSliderStep(step: step?.toDouble() ?? 100),
           trackBar: FlutterSliderTrackBar(
             activeTrackBar: BoxDecoration(
                 color: theme.primaryColor,
@@ -41,8 +47,9 @@ class TellusSlider extends StatelessWidget {
           ),
           tooltip: FlutterSliderTooltip(
             custom: (value) {
+              final printedValue = isInt ? value.toString().split(".")[0] : value.toString();
               return ECText(
-                value.toString() + " " + unit,
+                leftLabel + " " +printedValue + unit,
                 fontSize: 15,
                 color: theme.primaryColor,
               );

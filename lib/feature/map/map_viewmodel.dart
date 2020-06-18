@@ -242,8 +242,8 @@ class MapViewModel extends BaseViewModel {
   }
 
   _handleResponse(IngvResponse response, BuildContext context) {
-    if (response.error != null && response.error.isNotEmpty) {
-      Dialogs.showDefaultAlert(context);
+    if (response.hasError && response.error.isNotEmpty) {
+      Dialogs.showDefaultAlert(context,title: response.error);
     } else {
       _earthquakeList = response.features;
       _setMarkers();
