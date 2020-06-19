@@ -5,6 +5,7 @@ import 'package:telluslite/common/widgets/Ec_text.dart';
 import 'package:telluslite/common/widgets/appbar/app_navigation_bar.dart';
 import 'package:telluslite/common/widgets/slider/tellus_slider.dart';
 import 'package:telluslite/feature/map_filters/filters_viewmodel.dart';
+import 'package:telluslite/feature/map_filters/models/time_filter_type.dart';
 
 class FiltersScreen extends StatefulWidget {
   @override
@@ -14,6 +15,7 @@ class FiltersScreen extends StatefulWidget {
 class _FiltersScreenState extends State<FiltersScreen> {
   FiltersViewModel viewModel;
   ThemeData theme;
+  MediaQueryData _mediaQuery;
 
   @override
   void initState() {
@@ -27,11 +29,14 @@ class _FiltersScreenState extends State<FiltersScreen> {
   Widget build(BuildContext context) {
     theme = Theme.of(context);
     viewModel = Provider.of(context);
+    _mediaQuery = MediaQuery.of(context);
+
 
     return BaseWidget(loader: viewModel.loader , blurredLoader: true , body: _buildBody(context));
   }
 
   _buildBody(BuildContext context) {
+
     return SingleChildScrollView(
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 25),
@@ -39,22 +44,9 @@ class _FiltersScreenState extends State<FiltersScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             _buildAppBar(context),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              child: Row(
-                children: <Widget>[
-                  ECText(
-                    "Applied filters".toUpperCase(),
-                    fontSize: 14,
-                    align: TextAlign.start,
-                    fontWeight: FontWeight.w200,
-                    color: theme.primaryColor,
-                  ),
-                ],
-              ),
-            ),
             _buildDistanceWidget(context),
             _buildMagnitudeWidget(context),
+            _buildTimeFilterList(),
           ],
         ),
       ),
@@ -153,7 +145,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
         Padding(
           padding: const EdgeInsets.only(top: 8),
           child: ECText(
-            "Displays all earthquakes above the selected minimum magnitude",
+            "Display all earthquakes above the selected minimum magnitude",
             fontSize: 14,
             align: TextAlign.start,
             fontWeight: FontWeight.w200,
@@ -173,6 +165,67 @@ class _FiltersScreenState extends State<FiltersScreen> {
           },
         ),
       ],
+    );
+  }
+
+  _buildTimeFilterList(){
+    var items = TimeFilterType.values;
+    return Padding(
+      padding: const EdgeInsets.only(top: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          ECText(
+            "TIME".toUpperCase(),
+            fontSize: 14,
+            align: TextAlign.start,
+            fontWeight: FontWeight.w200,
+            color: theme.primaryColor,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: ECText(
+              "Display all earthquakes that have occurred in the selected time interval",
+              fontSize: 14,
+              align: TextAlign.start,
+              fontWeight: FontWeight.w200,
+              color: theme.primaryColor.withOpacity(.5),
+            ),
+          ),
+          LimitedBox(
+            maxHeight: 100,
+            child: ListView.builder(
+              shrinkWrap: true,
+              controller: viewModel.scrollController,
+              scrollDirection: Axis.horizontal,
+              itemCount: items.length,
+                itemBuilder: (context, index){
+                bool isSelected = items[index] == viewModel.selectedTimeFilterType;
+              return InkWell(
+                splashColor: Colors.transparent,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    width: 135,
+                    child: Chip(
+                      avatar: CircleAvatar(
+                        backgroundColor: isSelected? theme.primaryColor : Colors.grey,
+                        child: isSelected? Icon(Icons.done, color: theme.backgroundColor,) : IgnorePointer() ,
+                      ),
+                      label: ECText(
+                        items[index].getLabel(),
+                      ),
+                    ),
+                  ),
+                ),
+                onTap: (){
+                  viewModel.onTimeItemTap(items[index]);
+                },
+              );
+            }),
+          ),
+        ],
+      ),
     );
   }
 }

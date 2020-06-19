@@ -1,21 +1,46 @@
 import 'package:flutter/cupertino.dart';
 import 'package:telluslite/common/base_viewmodel.dart';
+import 'package:telluslite/feature/map_filters/models/time_filter_type.dart';
 import 'package:telluslite/navigation/Routes.dart';
 import 'package:telluslite/network/repositories/firestore_repository.dart';
 import 'package:telluslite/persistent/models/user_configuration.dart';
 
 class FiltersViewModel extends BaseViewModel {
   UserConfiguration _userConfiguration;
+  TimeFilterType _timeFilterType;
+  ScrollController _scrollController = ScrollController();
 
-  init() {
-    _getUserConfiguration();
+  init() async{
+    showLoader();
+    await _getUserConfiguration();
+    _setTimeFilterType();
+    _setScrollPosition();
+    hideLoader();
   }
 
   _getUserConfiguration() async {
-    showLoader();
     FireStoreRepository fireStoreRepository = FireStoreRepository();
     _userConfiguration = await fireStoreRepository.loadUserConfiguration();
-    hideLoader();
+  }
+
+  _setTimeFilterType(){
+    if(_userConfiguration != null){
+      switch(_userConfiguration.maxEta){
+        case 7: _timeFilterType = TimeFilterType.oneWeek; break;
+        case 30: _timeFilterType = TimeFilterType.oneMonth; break;
+        case 90: _timeFilterType = TimeFilterType.threeMonth; break;
+        case 180: _timeFilterType = TimeFilterType.sixMonth; break;
+        case 365: _timeFilterType = TimeFilterType.oneYear; break;
+        default :  _timeFilterType = TimeFilterType.oneWeek;
+      }
+      notifyListeners();
+    }
+  }
+  _setScrollPosition(){
+    if(selectedTimeFilterType != null) {
+      var index = TimeFilterType.values.indexOf(selectedTimeFilterType);
+      _scrollController.animateTo(index.roundToDouble() * 140 , duration: Duration(milliseconds: 200), curve: Curves.elasticOut);
+    }
   }
 
   onCancelTapped(BuildContext context) {
@@ -32,6 +57,12 @@ class FiltersViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+  onTimeItemTap(TimeFilterType type){
+    _timeFilterType = type;
+    _userConfiguration.maxEta = type.getDay();
+    notifyListeners();
+  }
+
   onApplyTapped() async {
     if (_userConfiguration != null) {
       showLoader();
@@ -44,5 +75,6 @@ class FiltersViewModel extends BaseViewModel {
 
   int get distance => _userConfiguration?.maxRadiusKm ?? 100;
   int get minMagnitude => _userConfiguration?.minMagnitude ?? 2;
-
+  TimeFilterType get selectedTimeFilterType => _timeFilterType ?? TimeFilterType.oneWeek;
+  ScrollController get scrollController => _scrollController;
 }

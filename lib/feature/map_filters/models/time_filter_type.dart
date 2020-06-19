@@ -19,7 +19,7 @@ extension TimeFilterTypeExtension on TimeFilterType{
         return 90;
         break;
       case TimeFilterType.sixMonth:
-        return 183;
+        return 180;
         break;
       case TimeFilterType.oneYear:
         return 365;
