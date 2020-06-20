@@ -39,7 +39,7 @@ class FiltersViewModel extends BaseViewModel {
   _setScrollPosition(){
     if(selectedTimeFilterType != null) {
       var index = TimeFilterType.values.indexOf(selectedTimeFilterType);
-      _scrollController.animateTo(index.roundToDouble() * 140 , duration: Duration(milliseconds: 200), curve: Curves.elasticOut);
+      _scrollController.animateTo(index.roundToDouble() * 151 , duration: Duration(milliseconds: 200), curve: Curves.bounceIn);
     }
   }
 

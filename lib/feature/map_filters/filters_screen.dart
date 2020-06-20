@@ -208,12 +208,14 @@ class _FiltersScreenState extends State<FiltersScreen> {
                   child: Container(
                     width: 135,
                     child: Chip(
+                      backgroundColor: theme.unselectedWidgetColor,
                       avatar: CircleAvatar(
-                        backgroundColor: isSelected? theme.primaryColor : Colors.grey,
+                        backgroundColor: isSelected? theme.primaryColor : theme.backgroundColor,
                         child: isSelected? Icon(Icons.done, color: theme.backgroundColor,) : IgnorePointer() ,
                       ),
                       label: ECText(
                         items[index].getLabel(),
+                        color: isSelected ? theme.accentColor : Colors.white,
                       ),
                     ),
                   ),

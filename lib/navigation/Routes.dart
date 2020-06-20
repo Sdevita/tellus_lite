@@ -4,6 +4,8 @@ import 'package:sailor/sailor.dart';
 import 'package:telluslite/feature/drawer_menu/drawer_viewmodel.dart';
 import 'package:telluslite/feature/login/login_page.dart';
 import 'package:telluslite/feature/login/login_viewmodel.dart';
+import 'package:telluslite/feature/map/empty_data/empty_data_screen.dart';
+import 'package:telluslite/feature/map/empty_data/empty_data_viewmodel.dart';
 import 'package:telluslite/feature/map/map_page.dart';
 import 'package:telluslite/feature/map/map_viewmodel.dart';
 import 'package:telluslite/feature/map_filters/filters_screen.dart';
@@ -23,6 +25,7 @@ class Routes {
   static const String login = "/login";
   static const String mapFilters = "/mapFilters";
   static const String splash = "/";
+  static const String noDataAlert = "/noDataAlert";
 
   static bool isCurrent(String routeName) {
     bool isCurrent = false;
@@ -103,6 +106,15 @@ class Routes {
         },
         defaultTransitions: [SailorTransition.slide_from_bottom],
         defaultTransitionCurve: Curves.fastLinearToSlowEaseIn));
-  }
 
+    // LOGIN ROUTE
+    sailor.addRoute(SailorRoute(
+        name: noDataAlert,
+        builder: (context, args, params) {
+          return ChangeNotifierProvider<EmptyDataViewModel>(
+            create: (_) => EmptyDataViewModel(),
+            child: EmptyDataScreen(),
+          );
+        }));
+  }
 }

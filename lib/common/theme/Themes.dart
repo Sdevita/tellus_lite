@@ -6,8 +6,8 @@ class Themes {
   static ThemeData basicTheme(BuildContext context) {
     return ThemeData(
         brightness: Brightness.light,
-        unselectedWidgetColor: Colors.grey,
-        accentColor: Colors.white,
+        unselectedWidgetColor: Colors.grey[300],
+        accentColor: Colors.blueAccent,
         primaryColor: Colors.blue,
         backgroundColor: Colors.white,
         appBarTheme: AppBarTheme(brightness: Brightness.light),
@@ -19,8 +19,8 @@ class Themes {
   static ThemeData darkTheme(BuildContext context) {
     return ThemeData(
         brightness: Brightness.dark,
-        unselectedWidgetColor: Colors.white,
-        accentColor: Colors.blue,
+        unselectedWidgetColor: AppColors.darkPrimary,
+        accentColor: Colors.blueAccent,
         backgroundColor: AppColors.darkGray,
         buttonColor: AppColors.darkPrimary,
         primaryColor: Colors.blue,
