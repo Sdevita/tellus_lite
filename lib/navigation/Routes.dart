@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sailor/sailor.dart';
 import 'package:telluslite/feature/drawer_menu/drawer_viewmodel.dart';
+import 'package:telluslite/feature/home/home_screen.dart';
+import 'package:telluslite/feature/home/home_viewmodel.dart';
 import 'package:telluslite/feature/login/login_page.dart';
 import 'package:telluslite/feature/login/login_viewmodel.dart';
 import 'package:telluslite/feature/map/empty_data/empty_data_screen.dart';
@@ -26,6 +28,7 @@ class Routes {
   static const String mapFilters = "/mapFilters";
   static const String splash = "/";
   static const String noDataAlert = "/noDataAlert";
+  static const String home = "/home";
 
   static bool isCurrent(String routeName) {
     bool isCurrent = false;
@@ -51,7 +54,8 @@ class Routes {
         return ChangeNotifierProvider(
           create: (_) => DrawerViewModel(),
           child: ChangeNotifierProvider(
-            create: (_) => notification != null
+            create: (_) =>
+            notification != null
                 ? MapViewModel(notificationModel: notification)
                 : MapViewModel(),
             child: MapPage(),
@@ -107,7 +111,7 @@ class Routes {
         defaultTransitions: [SailorTransition.slide_from_bottom],
         defaultTransitionCurve: Curves.fastLinearToSlowEaseIn));
 
-    // LOGIN ROUTE
+    // NO DATA ALERT ROUTE
     sailor.addRoute(SailorRoute(
         name: noDataAlert,
         builder: (context, args, params) {
@@ -115,6 +119,18 @@ class Routes {
             create: (_) => EmptyDataViewModel(),
             child: EmptyDataScreen(),
           );
+        }));
+
+    // HOME ROUTE
+    sailor.addRoute(SailorRoute(
+        name: home,
+        builder: (context, args, params) {
+          return ChangeNotifierProvider(
+            create: (_) => DrawerViewModel(),
+            child: ChangeNotifierProvider<HomeViewModel>(
+                create: (_) => HomeViewModel(),
+            child: HomeScreen(),
+          ),);
         }));
   }
 }

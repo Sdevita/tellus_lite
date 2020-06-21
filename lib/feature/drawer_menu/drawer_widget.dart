@@ -86,8 +86,23 @@ class _DrawerMenuState extends State<DrawerMenu>
   /// Build menu elements using [MenuItem] widget
   List<Widget> getMenuItems(context) {
     List<Widget> menuItems = List();
-    menuItems = [_buildMapMenu(context), _buildSettingsMenu(context)];
+    menuItems = [_buildHomeMenu(context), _buildMapMenu(context), _buildSettingsMenu(context)];
     return menuItems;
+  }
+
+  MenuItem _buildHomeMenu(context) {
+    return MenuItem(
+      icon: Padding(
+        padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+        child: ResourcesUtils.getSvg("map",
+            width: 24, height: 24, color: Colors.white), //SVG has no padding
+      ),
+      textColor: Colors.white,
+      text: "Home",
+      onPressed: () {
+        viewModel.navigateToSection(context, Routes.home);
+      },
+    );
   }
 
   MenuItem _buildMapMenu(context) {

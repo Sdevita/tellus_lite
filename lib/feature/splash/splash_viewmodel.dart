@@ -26,7 +26,7 @@ class SplashViewModel extends BaseViewModel {
   }
 
   _goToHome(BuildContext context) {
-    Routes.sailor.navigate(Routes.map, navigationType: NavigationType.pushReplace, params: {"notification": null});
+    Routes.sailor.navigate(Routes.home, navigationType: NavigationType.pushReplace);
   }
 
   pushNavigation(BuildContext context, Map<String, dynamic> notificationModel) {
