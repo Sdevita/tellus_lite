@@ -6,6 +6,7 @@ class Themes {
   static ThemeData basicTheme(BuildContext context) {
     return ThemeData(
         brightness: Brightness.light,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
         unselectedWidgetColor: Colors.grey[300],
         accentColor: Colors.blueAccent,
         primaryColor: Colors.blue,
@@ -18,6 +19,7 @@ class Themes {
 
   static ThemeData darkTheme(BuildContext context) {
     return ThemeData(
+        visualDensity: VisualDensity.adaptivePlatformDensity,
         brightness: Brightness.dark,
         unselectedWidgetColor: AppColors.darkPrimary,
         accentColor: Colors.blueAccent,

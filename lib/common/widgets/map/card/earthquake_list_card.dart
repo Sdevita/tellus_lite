@@ -79,18 +79,23 @@ class EarthQuakeListCard extends StatelessWidget {
           decoration: BoxDecoration(
               color: topCardColor ?? theme.backgroundColor,
               borderRadius: BorderRadius.circular(15)),
-          child: Padding(
-            padding: const EdgeInsets.only(left: 16, right: 16, top: 20, bottom: 16),
-            child: Column(
-              children: <Widget>[
-                ECText(
-                  title,
-                  fontSize: 15,
-                  autoResize: true,
-                  overflow: TextOverflow.fade,
-                  color: theme.primaryColor,
-                ),
-              ],
+          child: LimitedBox(
+            maxWidth: mediaQuery.size.width / 3,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 16, right: 16, top: 20, bottom: 16),
+              child: Column(
+                children: <Widget>[
+                  Expanded(
+                    child: ECText(
+                      title,
+                      fontSize: 15,
+                      autoResize: true,
+                      overflow: TextOverflow.fade,
+                      color: theme.primaryColor,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

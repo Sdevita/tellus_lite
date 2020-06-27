@@ -136,7 +136,7 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
                 child: Padding(
                   padding: const EdgeInsets.all(10.0),
                   child:
-                      ResourcesUtils.getSvg('menu', color: theme.primaryColor),
+                      ResourcesUtils.getSvg('menu', height: 40, width: 40, color: theme.primaryColor),
                 ),
               ),
               Flexible(

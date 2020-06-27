@@ -42,7 +42,7 @@ class _SettingsState extends State<Settings> with WidgetsBindingObserver {
             leftIcon: Padding(
                 padding: EdgeInsets.all(10),
                 child:
-                    ResourcesUtils.getSvg('menu', color: theme.primaryColor)),
+                    ResourcesUtils.getSvg('menu',height: 48, width: 48, color: theme.primaryColor)),
             onLeftButtonTapped: () {
               viewModel.onMenuClicked(context);
             },

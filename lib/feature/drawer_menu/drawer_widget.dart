@@ -26,6 +26,7 @@ class _DrawerMenuState extends State<DrawerMenu>
   double width, height;
   AnimationController _animController;
   Animation<double> _scaleAnimation;
+  MediaQueryData mediaQuery;
   ThemeData theme;
 
   @override
@@ -51,9 +52,9 @@ class _DrawerMenuState extends State<DrawerMenu>
   Widget build(BuildContext context) {
     theme = Theme.of(context);
     viewModel = Provider.of<DrawerViewModel>(context);
-    Size size = MediaQuery.of(context).size;
-    height = size.height;
-    width = size.width;
+    mediaQuery = MediaQuery.of(context);
+    height = mediaQuery.size.height;
+    width = mediaQuery.size.width;
 
     return Stack(
       children: <Widget>[
@@ -77,7 +78,7 @@ class _DrawerMenuState extends State<DrawerMenu>
   /// Build Menu screen elements
   Widget getMenu(BuildContext context) {
     return Menu(
-      spaceFromAppBar: 48,
+      spaceFromAppBar: mediaQuery.padding.top + 60,
       items: getMenuItems(context),
     );
     return Container();
@@ -161,8 +162,8 @@ class _DrawerMenuState extends State<DrawerMenu>
             widget.onDrawerOpened();
           }
         },
-        child: ScaleTransition(
-            scale: _scaleAnimation,
+        child: Transform.scale(
+            scale: _scaleAnimation.value,
             child: InkWell(
                 onTap: !viewModel.isDrawerClosed
                     ? () {
