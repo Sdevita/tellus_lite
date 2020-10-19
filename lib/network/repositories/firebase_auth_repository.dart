@@ -3,15 +3,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 class FireBaseAuthRepository{
   final FirebaseAuth auth = FirebaseAuth.instance;
 
-  Future<FirebaseUser> handleSignInEmail(String email, String password) async {
+  Future<User> handleSignInEmail(String email, String password) async {
 
-    AuthResult result = await auth.signInWithEmailAndPassword(email: email, password: password);
-    final FirebaseUser user = result.user;
+    UserCredential result = await auth.signInWithEmailAndPassword(email: email, password: password);
+    final User user = result.user;
 
     assert(user != null);
     assert(await user.getIdToken() != null);
 
-    final FirebaseUser currentUser = await auth.currentUser();
+    final User currentUser =  auth.currentUser;
     assert(user.uid == currentUser.uid);
 
     print('signInEmail succeeded: $user');
@@ -20,10 +20,10 @@ class FireBaseAuthRepository{
 
   }
 
-  Future<FirebaseUser> handleSignUp(email, password) async {
+  Future<User> handleSignUp(email, password) async {
 
-    AuthResult result = await auth.createUserWithEmailAndPassword(email: email, password: password);
-    final FirebaseUser user = result.user;
+    UserCredential result = await auth.createUserWithEmailAndPassword(email: email, password: password);
+    final User user = result.user;
 
     assert (user != null);
     assert (await user.getIdToken() != null);
@@ -32,9 +32,8 @@ class FireBaseAuthRepository{
 
   }
 
-  Future<bool> isUserLogged() async{
-    FirebaseUser result = await auth.currentUser();
-    return result != null;
+  bool isUserLogged() {
+    return auth.currentUser != null;
   }
 
   Future<void> logout() async{

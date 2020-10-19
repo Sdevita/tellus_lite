@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:sailor/sailor.dart';
 import 'package:telluslite/common/base_viewmodel.dart';
@@ -11,6 +12,7 @@ class SplashViewModel extends BaseViewModel {
   init(BuildContext context) async {
     await PushNotificationsManager().enable();
     PushNotificationsManager().init();
+    await Firebase.initializeApp();
     var authRepo = FireBaseAuthRepository();
     _isUserLogged = await authRepo.isUserLogged();
     notifyListeners();

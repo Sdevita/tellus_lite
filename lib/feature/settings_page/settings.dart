@@ -65,7 +65,7 @@ class _SettingsState extends State<Settings> with WidgetsBindingObserver {
             "Enable dark mode",
             style: TextStyle(fontSize: 16, color: theme.primaryColor),
           ),
-          Switch.adaptive(
+          CupertinoSwitch(
             activeColor: Theme.of(context).primaryColor,
             value: viewModel.switchValue,
             onChanged: (isDarkMode) {
